@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@auth0/nextjs-auth0";
+import { Bell, LogOut } from "lucide-react";
+import Link from "next/link";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -13,6 +14,8 @@ const navigation = [
 ];
 
 export function Header() {
+  const { user, error, isLoading } = useUser();
+
   return (
     <header className="border-b bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -37,16 +40,29 @@ export function Header() {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">
-                3
-              </span>
-            </Button>
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/avatar-placeholder.jpg" alt="User" />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
+            {user ? (
+              <>
+                <div className="flex items-center space-x-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.picture} alt={user.name || "User"} />
+                    <AvatarFallback>
+                      {user.name?.charAt(0).toUpperCase() ||
+                        user.email?.charAt(0).toUpperCase() ||
+                        "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button variant="ghost" size="sm" asChild>
+                    <a href="/auth/logout">
+                      <LogOut className="h-4 w-4" />
+                    </a>
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Button size="sm" asChild disabled={isLoading}>
+                <a href="/auth/login">{isLoading ? "Loading..." : "Sign In"}</a>
+              </Button>
+            )}
           </div>
         </div>
       </div>
