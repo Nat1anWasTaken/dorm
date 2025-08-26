@@ -1,7 +1,7 @@
 import { Header } from "@/components/header";
 import { NoticeBoard } from "@/components/notice-board";
 
-export default function Home() {
+export default function NoticeBoardPage() {
   return (
     <div>
       <Header />
