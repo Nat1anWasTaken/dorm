@@ -40,3 +40,16 @@ This is a Next.js 15 application using the App Router with TypeScript and Tailwi
 - UI components in `@/components/ui`  
 - Hooks in `@/hooks`
 - Global CSS in `src/app/globals.css`
+
+**Component Creation Guidelines:**
+- ALWAYS check if a component already exists before creating new ones
+- Check `@/components/ui/` for existing shadcn/ui components
+- If a shadcn/ui component doesn't exist, use the CLI: `pnpm dlx shadcn@latest add <component-name>`
+- Only create custom components when shadcn/ui doesn't provide the needed functionality
+
+## Documentation Research
+
+**Context7 Integration:**
+- Always use context7 MCP tools when searching for library documentation
+- Use `resolve-library-id` first to find the correct library ID
+- Then use `get-library-docs` to retrieve up-to-date documentation
