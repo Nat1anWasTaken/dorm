@@ -1,17 +1,19 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Firebase Setup (Auth + Firestore only)
+
+- Install deps: `pnpm install` (uses local store)
+- Add Firebase config to `.env.local` (see `.env.local.example`).
+- Client SDK is initialized in `src/lib/firebase/client.ts`.
+- Use only in client components: `import { auth, db } from '@/lib/firebase/client'`.
+- Docs: Firebase JS SDK modular API (`initializeApp`, `getAuth`, `getFirestore`).
+
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
