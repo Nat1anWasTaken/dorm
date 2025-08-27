@@ -1,22 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2, Pin, PinOff } from "lucide-react";
+import { useAdminClaims } from "@/hooks/use-admin";
+import { type Notice, type NoticeCardProps } from "@/types/notice";
 
-export interface Notice {
-  id: string;
-  title: string;
-  description: string;
-  category: "events" | "announcements" | "maintenance";
-  image?: string;
-  isPinned?: boolean;
-  createdAt: string;
-}
-
-interface NoticeCardProps {
-  notice: Notice;
-}
-
-export function NoticeCard({ notice }: NoticeCardProps) {
+export function NoticeCard({ notice, onEdit, onDelete, onTogglePin }: NoticeCardProps) {
+  const { isAdmin } = useAdminClaims();
   const getCategoryColor = (category: Notice["category"]) => {
     switch (category) {
       case "events":
@@ -51,6 +44,43 @@ export function NoticeCard({ notice }: NoticeCardProps) {
           <Badge className="absolute top-3 right-3 bg-yellow-500 text-white">
             Pinned
           </Badge>
+        )}
+        {isAdmin && (
+          <div className="absolute top-3 left-3 flex gap-1">
+            <Button
+              size="sm"
+              variant="secondary"
+              className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.(notice);
+              }}
+            >
+              <Edit className="h-3 w-3" />
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePin?.(notice);
+              }}
+            >
+              {notice.isPinned ? <PinOff className="h-3 w-3" /> : <Pin className="h-3 w-3" />}
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              className="h-8 w-8 p-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.(notice);
+              }}
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
         )}
       </div>
       <CardContent className="p-4">
