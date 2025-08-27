@@ -29,11 +29,11 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
 
   const actionCodeSettings = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${baseUrl}/login`;
+    const url = `${baseUrl}/auth/callback?continueUrl=${encodeURIComponent(continueUrl)}`;
     const dynamicLinkDomain =
       process.env.NEXT_PUBLIC_FIREBASE_DYNAMIC_LINK_DOMAIN || undefined;
     return { handleCodeInApp: true, url, dynamicLinkDomain } as const;
-  }, []);
+  }, [continueUrl]);
 
   const completeEmailLinkIfPresent = useCallback(async () => {
     if (typeof window === "undefined") return;
