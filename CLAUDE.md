@@ -53,3 +53,5 @@ This is a Next.js 15 application using the App Router with TypeScript and Tailwi
 - Always use context7 MCP tools when searching for library documentation
 - Use `resolve-library-id` first to find the correct library ID
 - Then use `get-library-docs` to retrieve up-to-date documentation
+
+<!-- Auth0 integration has been removed from this project. -->

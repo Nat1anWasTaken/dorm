@@ -1,8 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { UserMenu } from "@/components/user-menu";
-import { useUser } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 
 const navigation = [
@@ -13,8 +10,6 @@ const navigation = [
 ];
 
 export function Header() {
-  const { user, error, isLoading } = useUser();
-
   return (
     <header className="border-b bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -38,15 +33,7 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <UserMenu />
-            ) : (
-              <Button size="sm" asChild disabled={isLoading}>
-                <a href="/auth/login">{isLoading ? "Loading..." : "Sign In"}</a>
-              </Button>
-            )}
-          </div>
+          <div className="flex items-center space-x-4" />
         </div>
       </div>
     </header>
