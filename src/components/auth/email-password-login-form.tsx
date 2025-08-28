@@ -79,7 +79,7 @@ export function EmailPasswordLoginForm({
       <div className="text-center">
         <Link
           href="/login/forgot-password"
-          className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4"
+          className="text-muted-foreground hover:text-foreground text-sm underline underline-offset-4"
         >
           忘記密碼？
         </Link>

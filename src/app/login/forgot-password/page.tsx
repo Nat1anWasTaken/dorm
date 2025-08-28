@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 import { auth } from "@/lib/firebase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +19,7 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email.trim()) {
       toast.error("請輸入電子郵件地址");
       return;
@@ -34,10 +35,28 @@ export default function ForgotPasswordPage() {
       await sendPasswordResetEmail(auth, email);
       setEmailSent(true);
       toast.success("密碼重設郵件已發送！");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Password reset error:", error);
-      
-      switch (error.code) {
+
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/user-not-found":
+            toast.error("找不到此電子郵件帳號");
+            break;
+          case "auth/invalid-email":
+            toast.error("電子郵件格式不正確");
+            break;
+          case "auth/too-many-requests":
+            toast.error("請求過於頻繁，請稍後再試");
+            break;
+          default:
+            toast.error("發送失敗，請稍後再試");
+        }
+        return;
+      }
+
+      // Fallback for non-Firebase errors
+      switch ((error as { code?: string }).code) {
         case "auth/user-not-found":
           toast.error("找不到此電子郵件帳號");
           break;
@@ -63,12 +82,12 @@ export default function ForgotPasswordPage() {
             <CardTitle>郵件已發送</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               我們已將密碼重設連結發送至：
               <br />
               <strong>{email}</strong>
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               請檢查您的信箱並點擊連結來重設密碼。如果沒有收到郵件，請檢查垃圾郵件資料夾。
             </p>
             <div className="flex flex-col gap-2 pt-4">
@@ -105,20 +124,20 @@ export default function ForgotPasswordPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="輸入您的電子郵件地址"
                 required
               />
             </div>
-            
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "發送中..." : "發送重設連結"}
             </Button>
-            
+
             <div className="text-center">
               <Link
                 href="/login"
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground text-sm"
               >
                 返回登入
               </Link>

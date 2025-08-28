@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 import { auth } from "@/lib/firebase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-export default function ResetPasswordPage() {
+function ResetPasswordInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const oobCode = searchParams.get("oobCode");
@@ -38,10 +39,25 @@ export default function ResetPasswordPage() {
         const userEmail = await verifyPasswordResetCode(auth, oobCode);
         setEmail(userEmail);
         setIsValidCode(true);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Code verification error:", error);
-        
-        switch (error.code) {
+
+        if (error instanceof FirebaseError) {
+          switch (error.code) {
+            case "auth/expired-action-code":
+              toast.error("重設連結已過期，請重新申請");
+              break;
+            case "auth/invalid-action-code":
+              toast.error("無效的重設連結");
+              break;
+            default:
+              toast.error("連結驗證失敗，請重新申請");
+          }
+          router.push("/login/forgot-password");
+          return;
+        }
+
+        switch ((error as { code?: string }).code) {
           case "auth/expired-action-code":
             toast.error("重設連結已過期，請重新申請");
             break;
@@ -92,10 +108,29 @@ export default function ResetPasswordPage() {
       await confirmPasswordReset(auth, oobCode!, newPassword);
       setResetComplete(true);
       toast.success("密碼重設成功！");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Password reset error:", error);
-      
-      switch (error.code) {
+
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/expired-action-code":
+            toast.error("重設連結已過期，請重新申請");
+            router.push("/login/forgot-password");
+            break;
+          case "auth/invalid-action-code":
+            toast.error("無效的重設連結");
+            router.push("/login/forgot-password");
+            break;
+          case "auth/weak-password":
+            toast.error("密碼強度不足，請使用更複雜的密碼");
+            break;
+          default:
+            toast.error("密碼重設失敗，請稍後再試");
+        }
+        return;
+      }
+
+      switch ((error as { code?: string }).code) {
         case "auth/expired-action-code":
           toast.error("重設連結已過期，請重新申請");
           router.push("/login/forgot-password");
@@ -122,8 +157,8 @@ export default function ResetPasswordPage() {
         <Card className="w-full max-w-md">
           <CardContent className="flex items-center justify-center p-6">
             <div className="text-center">
-              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-sm text-muted-foreground">驗證重設連結中...</p>
+              <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
+              <p className="text-muted-foreground text-sm">驗證重設連結中...</p>
             </div>
           </CardContent>
         </Card>
@@ -140,7 +175,7 @@ export default function ResetPasswordPage() {
             <CardTitle className="text-green-600">密碼重設完成</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               您的密碼已成功重設。現在您可以使用新密碼登入。
             </p>
             <Button asChild className="w-full">
@@ -161,7 +196,7 @@ export default function ResetPasswordPage() {
             <CardTitle className="text-red-600">連結無效</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               此重設連結無效或已過期。
             </p>
             <Button asChild className="w-full">
@@ -179,7 +214,7 @@ export default function ResetPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>設定新密碼</CardTitle>
-          <p className="text-sm text-muted-foreground">{email}</p>
+          <p className="text-muted-foreground text-sm">{email}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -189,37 +224,37 @@ export default function ResetPasswordPage() {
                 id="newPassword"
                 type="password"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={e => setNewPassword(e.target.value)}
                 placeholder="輸入新密碼"
                 autoComplete="new-password"
                 required
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 密碼至少需要 6 個字元
               </p>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">確認新密碼</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={e => setConfirmPassword(e.target.value)}
                 placeholder="再次輸入新密碼"
                 autoComplete="new-password"
                 required
               />
             </div>
-            
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "重設中..." : "重設密碼"}
             </Button>
-            
+
             <div className="text-center">
               <Link
                 href="/login"
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground text-sm"
               >
                 返回登入
               </Link>
@@ -228,5 +263,13 @@ export default function ResetPasswordPage() {
         </CardContent>
       </Card>
     </Container>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordInner />
+    </Suspense>
   );
 }
