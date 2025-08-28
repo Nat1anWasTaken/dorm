@@ -32,26 +32,40 @@ export default function NoticeReadPage() {
     }
   }, [notice]);
 
+  const categoryLabel = useMemo(() => {
+    if (!notice) return "";
+    switch (notice.category) {
+      case "events":
+        return "活動";
+      case "announcements":
+        return "公告";
+      case "maintenance":
+        return "維護";
+      default:
+        return notice.category;
+    }
+  }, [notice]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Container className="py-8">
         <div className="mb-6 flex items-center justify-between">
           <Button variant="ghost" onClick={() => router.push("/")}>
-            ← Back
+            ← 返回
           </Button>
           {isAdmin && notice && (
             <Button onClick={() => router.push(`/notices/${notice.id}/edit`)}>
-              Edit
+              編輯
             </Button>
           )}
         </div>
 
         {loading ? (
-          <div className="text-gray-600">Loading...</div>
+          <div className="text-gray-600">載入中…</div>
         ) : error ? (
           <div className="text-red-600">{error}</div>
         ) : !notice ? (
-          <div className="text-gray-600">Notice not found.</div>
+          <div className="text-gray-600">找不到公告。</div>
         ) : (
           <article className="bg-white rounded-lg shadow-sm overflow-hidden">
             {notice.image ? (
@@ -68,12 +82,9 @@ export default function NoticeReadPage() {
 
             <div className="p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-4">
-                <Badge className={categoryColor}>
-                  {notice.category.charAt(0).toUpperCase() +
-                    notice.category.slice(1)}
-                </Badge>
+                <Badge className={categoryColor}>{categoryLabel}</Badge>
                 {notice.isPinned && (
-                  <Badge className="bg-yellow-500 text-white">Pinned</Badge>
+                  <Badge className="bg-yellow-500 text-white">置頂</Badge>
                 )}
                 <span className="text-sm text-gray-500 ml-auto">
                   {new Date(notice.createdAt).toLocaleDateString()}

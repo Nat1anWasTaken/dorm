@@ -61,8 +61,8 @@ export function NoticeForm({
   const previewNotice: Notice = useMemo(
     () => ({
       id: initialNotice?.id || "preview",
-      title: title || "Untitled Notice",
-      description: description || "Short description will appear here.",
+      title: title || "未命名公告",
+      description: description || "簡短描述會顯示在此。",
       content: content || "",
       category,
       image: imagePreview || undefined,
@@ -85,7 +85,7 @@ export function NoticeForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !description.trim() || !content.trim()) {
-      toast.error("Please fill in title, description, and content");
+      toast.error("請填寫標題、摘要與內容");
       return;
     }
 
@@ -108,17 +108,17 @@ export function NoticeForm({
         await queryClient.invalidateQueries({
           queryKey: noticesKeys.detail(initialNotice.id),
         });
-        toast.success("Notice updated");
+        toast.success("已更新公告");
       } else {
         await noticeApi.createNotice(payload);
         await queryClient.invalidateQueries({ queryKey: noticesKeys.all });
-        toast.success("Notice created");
+        toast.success("已建立公告");
       }
 
       router.push("/");
     } catch (err) {
       console.error(err);
-      toast.error(err instanceof Error ? err.message : "Failed to save notice");
+      toast.error(err instanceof Error ? err.message : "儲存公告失敗");
     } finally {
       setSubmitting(false);
     }
@@ -131,45 +131,45 @@ export function NoticeForm({
     >
       <div className="lg:col-span-2 space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
+          <Label htmlFor="title">標題</Label>
           <Input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g., Water Maintenance on 21st"
+            placeholder="例如：21 日停水維護"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Short Description</Label>
+          <Label htmlFor="description">摘要</Label>
           <Textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            placeholder="One or two sentences summary"
+            placeholder="一到兩句簡短說明"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">類別</Label>
             <Select
               value={category}
               onValueChange={(val) => setCategory(val as Notice["category"])}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder="請選擇類別" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="announcements">Announcements</SelectItem>
-                <SelectItem value="events">Events</SelectItem>
-                <SelectItem value="maintenance">Maintenance</SelectItem>
+                <SelectItem value="announcements">公告</SelectItem>
+                <SelectItem value="events">活動</SelectItem>
+                <SelectItem value="maintenance">維護</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="pinned">Pinned</Label>
+            <Label htmlFor="pinned">置頂</Label>
             <div className="flex items-center gap-3 py-2">
               <input
                 id="pinned"
@@ -178,18 +178,18 @@ export function NoticeForm({
                 onChange={(e) => setIsPinned(e.target.checked)}
               />
               <span className="text-sm text-gray-600">
-                Show at top of board
+                顯示在公告欄頂端
               </span>
             </div>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label>Image</Label>
+          <Label>圖片</Label>
           <div className="flex items-center gap-3">
             <Input
               type="url"
-              placeholder="Image URL"
+              placeholder="圖片網址"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
             />
@@ -202,20 +202,20 @@ export function NoticeForm({
                   setImageUrl("");
                 }}
               >
-                Remove
+                移除
               </Button>
             )}
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label>Full Content (Markdown supported)</Label>
+          <Label>內容（支援 Markdown）</Label>
           <NoticeEditor content={content} onChange={setContent} />
         </div>
 
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={submitting}>
-            {mode === "edit" ? "Update Notice" : "Create Notice"}
+            {mode === "edit" ? "更新公告" : "建立公告"}
           </Button>
           <Button
             type="button"
@@ -223,7 +223,7 @@ export function NoticeForm({
             disabled={submitting}
             onClick={() => router.back()}
           >
-            Cancel
+            取消
           </Button>
         </div>
       </div>
@@ -231,7 +231,7 @@ export function NoticeForm({
       <div className="lg:col-span-1">
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-500 mb-2">Live Preview</div>
+            <div className="text-sm text-gray-500 mb-2">即時預覽</div>
             <NoticeCard notice={previewNotice} showAdminControls={false} />
           </CardContent>
         </Card>

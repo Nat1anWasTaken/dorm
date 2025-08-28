@@ -33,7 +33,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
     setError(null);
     setMessage(null);
     if (password !== confirm) {
-      setError("Passwords do not match.");
+      setError("兩次輸入的密碼不一致。");
       return;
     }
     setLoading(true);
@@ -45,10 +45,10 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
       try {
         await sendEmailVerification(cred.user);
       } catch {}
-      setMessage("Account created. Verification email sent.");
+      setMessage("帳號已建立，驗證郵件已寄出。");
       router.push(continueUrl);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Failed to register.";
+      const msg = e instanceof Error ? e.message : "註冊失敗。";
       setError(msg);
     } finally {
       setLoading(false);
@@ -68,17 +68,17 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
         </div>
       )}
       <div>
-        <label className="mb-1 block text-sm font-medium">Name</label>
+        <label className="mb-1 block text-sm font-medium">姓名</label>
         <Input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Jane Doe"
+          placeholder="王小明"
           disabled={loading}
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Email</label>
+        <label className="mb-1 block text-sm font-medium">電子郵件</label>
         <Input
           type="email"
           required
@@ -90,7 +90,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Password</label>
+        <label className="mb-1 block text-sm font-medium">密碼</label>
         <Input
           type="password"
           required
@@ -102,7 +102,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Confirm Password</label>
+        <label className="mb-1 block text-sm font-medium">確認密碼</label>
         <Input
           type="password"
           required
@@ -114,7 +114,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
         />
       </div>
       <Button type="submit" disabled={loading} className="w-full">
-        {loading ? "Creating…" : "Create account"}
+        {loading ? "建立中…" : "建立帳號"}
       </Button>
     </form>
   );

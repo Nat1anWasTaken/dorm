@@ -42,14 +42,14 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
     setLinkPresent(present);
     if (!present) return;
 
-    setMessage("Completing sign-in…");
+    setMessage("正在完成登入…");
     setError(null);
     setLoading(true);
     try {
       const stored = window.localStorage.getItem(EMAIL_FOR_SIGN_IN_KEY) || email;
       if (!stored) {
         setMessage(null);
-        setError("Enter your email to complete sign-in.");
+        setError("請輸入電子郵件以完成登入。");
         setLoading(false);
         return;
       }
@@ -57,7 +57,7 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
       window.localStorage.removeItem(EMAIL_FOR_SIGN_IN_KEY);
       router.push(continueUrl);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Failed to complete sign-in link.";
+      const msg = e instanceof Error ? e.message : "完成登入連結失敗。";
       setError(msg);
       setMessage(null);
     } finally {
@@ -79,9 +79,9 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
       if (typeof window !== "undefined") {
         window.localStorage.setItem(EMAIL_FOR_SIGN_IN_KEY, email);
       }
-      setMessage("Sign-in link sent. Check your email.");
+      setMessage("已寄出登入連結，請至電子郵件查收。");
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Failed to send sign-in link.";
+      const msg = e instanceof Error ? e.message : "寄送登入連結失敗。";
       setError(msg);
     } finally {
       setLoading(false);
@@ -93,14 +93,14 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
     const href = window.location.href;
     if (!isSignInWithEmailLink(auth, href)) return;
     setLoading(true);
-    setMessage("Completing sign-in…");
+    setMessage("正在完成登入…");
     setError(null);
     try {
       await signInWithEmailLink(auth, email, href);
       window.localStorage.removeItem(EMAIL_FOR_SIGN_IN_KEY);
       router.push(continueUrl);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Failed to complete sign-in link.";
+      const msg = e instanceof Error ? e.message : "完成登入連結失敗。";
       setError(msg);
       setMessage(null);
     } finally {
@@ -121,7 +121,7 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
         </div>
       )}
       <div>
-        <label className="mb-1 block text-sm font-medium">Email</label>
+        <label className="mb-1 block text-sm font-medium">電子郵件</label>
         <Input
           type="email"
           required
@@ -134,7 +134,7 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
       </div>
       <div className="flex gap-2">
         <Button type="submit" disabled={loading} className="flex-1">
-          {loading ? "Sending…" : "Send sign-in link"}
+          {loading ? "傳送中…" : "寄送登入連結"}
         </Button>
         {linkPresent && (
           <Button
@@ -143,12 +143,12 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
             disabled={loading || !email}
             onClick={handleCompleteEmailLink}
           >
-            Complete sign-in
+            完成登入
           </Button>
         )}
       </div>
       <p className="text-xs text-muted-foreground">
-        We’ll email you a secure link. After clicking it, you’ll be signed in here.
+        我們會寄送一組安全連結給您。點擊後即可在此完成登入。
       </p>
     </form>
   );

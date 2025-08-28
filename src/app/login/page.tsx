@@ -24,16 +24,16 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Log in</CardTitle>
+            <CardTitle className="text-2xl">登入</CardTitle>
             <CardDescription>
-              Use email/password or request a magic link.
+              使用電子郵件與密碼，或索取電子郵件登入連結。
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="password">
               <TabsList className="mb-4 w-full">
-                <TabsTrigger value="password">Email & Password</TabsTrigger>
-                <TabsTrigger value="link">Email Link</TabsTrigger>
+                <TabsTrigger value="password">電子郵件與密碼</TabsTrigger>
+                <TabsTrigger value="link">電子郵件連結</TabsTrigger>
               </TabsList>
 
               <TabsContent value="password">
@@ -45,19 +45,19 @@ export default function LoginPage() {
               </TabsContent>
             </Tabs>
 
-            <div className="mt-6 text-center text-sm text-muted-foreground">
-              <div>
-                Don&apos;t have an account?{" "}
-                <Link href="/register" className="underline underline-offset-4">
-                  Register
-                </Link>
+              <div className="mt-6 text-center text-sm text-muted-foreground">
+                <div>
+                  還沒有帳號？{" "}
+                  <Link href="/register" className="underline underline-offset-4">
+                    註冊
+                  </Link>
+                </div>
+                <div className="mt-2">
+                  <Link href="/" className="underline underline-offset-4">
+                    回到首頁
+                  </Link>
+                </div>
               </div>
-              <div className="mt-2">
-                <Link href="/" className="underline underline-offset-4">
-                  Go back home
-                </Link>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>

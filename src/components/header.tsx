@@ -20,8 +20,8 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Committee", href: "/committee" },
+  { name: "首頁", href: "/" },
+  { name: "委員會", href: "/committee" },
 ];
 
 export function Header() {
@@ -63,7 +63,7 @@ export function Header() {
                       {user.photoURL ? (
                         <AvatarImage
                           src={user.photoURL}
-                          alt={user.displayName || user.email || "User"}
+                          alt={user.displayName || user.email || "使用者"}
                         />
                       ) : null}
                       <AvatarFallback>{letter}</AvatarFallback>
@@ -76,19 +76,19 @@ export function Header() {
                       <span className="truncate">
                         {user.displayName || user.email}
                       </span>
-                      {isAdmin && <Badge variant="destructive">Admin</Badge>}
+                      {isAdmin && <Badge variant="destructive">管理員</Badge>}
                     </DropdownMenuLabel>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => void signOut(auth)}>
-                    Sign out
+                    登出
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <>
                 <Button asChild size="sm" variant="outline">
-                  <Link href="/login">Login</Link>
+                  <Link href="/login">登入</Link>
                 </Button>
               </>
             )}

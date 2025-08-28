@@ -24,14 +24,14 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Create your account</CardTitle>
-            <CardDescription>Join DormConnect in a minute.</CardDescription>
+            <CardTitle className="text-2xl">建立你的帳號</CardTitle>
+            <CardDescription>一分鐘內加入 DormConnect。</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="register">
               <TabsList className="mb-4 w-full">
-                <TabsTrigger value="register">Create Account</TabsTrigger>
-                <TabsTrigger value="link">Email Link</TabsTrigger>
+                <TabsTrigger value="register">建立帳號</TabsTrigger>
+                <TabsTrigger value="link">電子郵件連結</TabsTrigger>
               </TabsList>
 
               <TabsContent value="register">
@@ -44,14 +44,14 @@ export default function RegisterPage() {
             </Tabs>
 
             <div className="mt-6 text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
+              已經有帳號了嗎？{" "}
               <Link href="/login" className="underline underline-offset-4">
-                Log in
+                登入
               </Link>
             </div>
             <div className="mt-2 text-center text-sm text-muted-foreground">
               <Link href="/" className="underline underline-offset-4">
-                Go back home
+                回到首頁
               </Link>
             </div>
           </CardContent>

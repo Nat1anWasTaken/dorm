@@ -35,7 +35,7 @@ export default function AuthCallbackPage() {
       const href = window.location.href;
       const isLink = isSignInWithEmailLink(auth, href);
       if (!isLink) {
-        setError("Invalid or expired sign-in link.");
+        setError("登入連結無效或已過期。");
         setLoading(false);
         return;
       }
@@ -53,7 +53,7 @@ export default function AuthCallbackPage() {
         window.localStorage.removeItem(EMAIL_FOR_SIGN_IN_KEY);
         router.replace(continueUrl);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Failed to complete sign-in link.";
+        const msg = e instanceof Error ? e.message : "完成登入連結失敗。";
         setError(msg);
         setNeedsEmail(true);
       } finally {
@@ -76,7 +76,7 @@ export default function AuthCallbackPage() {
       window.localStorage.removeItem(EMAIL_FOR_SIGN_IN_KEY);
       router.replace(continueUrl);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Failed to complete sign-in link.";
+      const msg = e instanceof Error ? e.message : "完成登入連結失敗。";
       setError(msg);
     } finally {
       setLoading(false);
@@ -88,15 +88,15 @@ export default function AuthCallbackPage() {
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Completing sign-in…</CardTitle>
+            <CardTitle className="text-2xl">正在完成登入…</CardTitle>
             <CardDescription>
               {loading
-                ? "Verifying your email link."
+                ? "正在驗證您的電子郵件連結。"
                 : needsEmail
-                ? "Enter your email to finish signing in."
+                ? "請輸入您的電子郵件以完成登入。"
                 : error
-                ? "There was a problem completing the link."
-                : "Done"}
+                ? "完成連結時發生問題。"
+                : "完成"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -108,7 +108,7 @@ export default function AuthCallbackPage() {
             {needsEmail && (
               <form onSubmit={handleComplete} className="space-y-3">
                 <div>
-                  <label className="mb-1 block text-sm font-medium">Email</label>
+                  <label className="mb-1 block text-sm font-medium">電子郵件</label>
                   <Input
                     type="email"
                     required
@@ -120,13 +120,13 @@ export default function AuthCallbackPage() {
                   />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full">
-                  {loading ? "Completing…" : "Complete sign-in"}
+                  {loading ? "處理中…" : "完成登入"}
                 </Button>
               </form>
             )}
             {!needsEmail && (
               <div className="text-sm text-muted-foreground">
-                {loading ? "Please wait…" : "You can close this tab."}
+                {loading ? "請稍候…" : "您可以關閉此分頁。"}
               </div>
             )}
           </CardContent>
@@ -135,4 +135,3 @@ export default function AuthCallbackPage() {
     </div>
   );
 }
-

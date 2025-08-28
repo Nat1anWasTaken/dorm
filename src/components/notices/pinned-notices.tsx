@@ -10,7 +10,7 @@ interface PinnedNoticesProps {
 export function PinnedNotices({ notices }: PinnedNoticesProps) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-900">Pinned Notices</h2>
+      <h2 className="text-xl font-semibold text-gray-900">置頂公告</h2>
       
       <div className="space-y-4">
         {notices.map((notice) => (
@@ -33,7 +33,7 @@ export function PinnedNotices({ notices }: PinnedNoticesProps) {
               <CardContent className="flex-1 p-3">
                 <div className="flex items-start justify-between mb-1">
                   <Badge variant="secondary" className="text-xs">
-                    Pinned
+                    置頂
                   </Badge>
                 </div>
                 <h3 className="font-medium text-sm line-clamp-2 mb-1">
@@ -50,7 +50,7 @@ export function PinnedNotices({ notices }: PinnedNoticesProps) {
       
       {notices.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          <p>No pinned notices at the moment.</p>
+          <p>目前沒有置頂公告。</p>
         </div>
       )}
     </div>

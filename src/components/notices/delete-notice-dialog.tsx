@@ -24,10 +24,10 @@ type DeleteNoticeDialogProps = {
 export function DeleteNoticeDialog({
   open,
   onOpenChange,
-  title = "Delete Notice",
-  description = "Are you sure you want to delete this notice? This action cannot be undone.",
-  confirmLabel = "Delete",
-  cancelLabel = "Cancel",
+  title = "刪除公告",
+  description = "你確定要刪除這則公告嗎？此動作無法復原。",
+  confirmLabel = "刪除",
+  cancelLabel = "取消",
   onConfirm,
 }: DeleteNoticeDialogProps) {
   const [submitting, setSubmitting] = useState(false);
@@ -75,4 +75,3 @@ export function DeleteNoticeDialog({
 }
 
 export default DeleteNoticeDialog;
-

@@ -38,6 +38,19 @@ export function NoticeCard({
     }
   };
 
+  const getCategoryLabel = (category: Notice["category"]) => {
+    switch (category) {
+      case "events":
+        return "活動";
+      case "announcements":
+        return "公告";
+      case "maintenance":
+        return "維護";
+      default:
+        return category;
+    }
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
       <div className="aspect-[4/3] relative bg-gray-100">
@@ -57,7 +70,7 @@ export function NoticeCard({
         )}
         {notice.isPinned && (
           <Badge className="absolute top-3 right-3 bg-yellow-500 text-white">
-            Pinned
+            置頂
           </Badge>
         )}
         {isAdmin && showAdminControls && (
@@ -76,7 +89,7 @@ export function NoticeCard({
                   <Edit className="h-3 w-3" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Edit</TooltipContent>
+              <TooltipContent>編輯</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -98,7 +111,7 @@ export function NoticeCard({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {notice.isPinned ? "Unpin" : "Pin"}
+                {notice.isPinned ? "取消置頂" : "置頂"}
               </TooltipContent>
             </Tooltip>
 
@@ -116,7 +129,7 @@ export function NoticeCard({
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Delete</TooltipContent>
+              <TooltipContent>刪除</TooltipContent>
             </Tooltip>
           </div>
         )}
@@ -124,7 +137,7 @@ export function NoticeCard({
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <Badge className={getCategoryColor(notice.category)}>
-            {notice.category.charAt(0).toUpperCase() + notice.category.slice(1)}
+            {getCategoryLabel(notice.category)}
           </Badge>
         </div>
         <h3 className="font-semibold text-lg mb-2 line-clamp-2">
@@ -138,8 +151,8 @@ export function NoticeCard({
         <DeleteNoticeDialog
           open={showDeleteDialog}
           onOpenChange={setShowDeleteDialog}
-          title="Delete Notice"
-          description={`Are you sure you want to delete "${notice.title}"? This action cannot be undone.`}
+          title="刪除公告"
+          description={`你確定要刪除「${notice.title}」嗎？此動作無法復原。`}
           onConfirm={async () => {
             if (!onDelete) return;
             await onDelete(notice);

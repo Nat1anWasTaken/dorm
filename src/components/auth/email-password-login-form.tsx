@@ -28,7 +28,7 @@ export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPa
       await signInWithEmailAndPassword(auth, email, password);
       router.push(continueUrl);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Failed to sign in.";
+      const msg = e instanceof Error ? e.message : "登入失敗。";
       setError(msg);
     } finally {
       setLoading(false);
@@ -43,7 +43,7 @@ export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPa
         </div>
       )}
       <div>
-        <label className="mb-1 block text-sm font-medium">Email</label>
+        <label className="mb-1 block text-sm font-medium">電子郵件</label>
         <Input
           type="email"
           required
@@ -55,7 +55,7 @@ export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPa
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Password</label>
+        <label className="mb-1 block text-sm font-medium">密碼</label>
         <Input
           type="password"
           required
@@ -67,7 +67,7 @@ export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPa
         />
       </div>
       <Button type="submit" disabled={loading} className="w-full">
-        {loading ? "Signing in…" : "Sign in"}
+        {loading ? "登入中…" : "登入"}
       </Button>
     </form>
   );

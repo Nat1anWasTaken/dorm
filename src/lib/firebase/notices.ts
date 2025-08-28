@@ -88,7 +88,7 @@ export async function getNotices(params?: {
     }
     
     if (!db) {
-      throw new Error("Firebase not initialized");
+      throw new Error("Firebase 未初始化");
     }
     const noticesRef = collection(db, NOTICES_COLLECTION);
     console.log("Collection reference created:", noticesRef ? "✅ Success" : "❌ Failed");
@@ -136,7 +136,7 @@ export async function getNotices(params?: {
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("Failed to fetch notices from Firestore");
+    throw new Error("從 Firestore 讀取公告失敗");
   }
 }
 
@@ -146,7 +146,7 @@ export async function getNotices(params?: {
 export async function getNoticeById(id: string): Promise<Notice | null> {
   try {
     if (!db) {
-      throw new Error("Firebase not initialized");
+      throw new Error("Firebase 未初始化");
     }
     const docRef = doc(db, NOTICES_COLLECTION, id);
     const docSnap = await getDoc(docRef);
@@ -158,7 +158,7 @@ export async function getNoticeById(id: string): Promise<Notice | null> {
     return docToNotice(docSnap);
   } catch (error) {
     console.error("Error fetching notice:", error);
-    throw new Error("Failed to fetch notice from Firestore");
+    throw new Error("從 Firestore 讀取公告失敗");
   }
 }
 
@@ -168,7 +168,7 @@ export async function getNoticeById(id: string): Promise<Notice | null> {
 export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Notice> {
   try {
     if (!db) {
-      throw new Error("Firebase not initialized");
+      throw new Error("Firebase 未初始化");
     }
     // Build payload and omit undefined fields (Firestore rejects undefined values)
     const basePayload = {
@@ -194,7 +194,7 @@ export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Noti
     return newNotice;
   } catch (error) {
     console.error("Error creating notice:", error);
-    throw new Error("Failed to create notice in Firestore");
+    throw new Error("在 Firestore 建立公告失敗");
   }
 }
 
@@ -204,7 +204,7 @@ export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Noti
 export async function updateNotice(id: string, updates: Partial<Omit<Notice, "id">>): Promise<void> {
   try {
     if (!db) {
-      throw new Error("Firebase not initialized");
+      throw new Error("Firebase 未初始化");
     }
     const docRef = doc(db, NOTICES_COLLECTION, id);
     
@@ -216,7 +216,7 @@ export async function updateNotice(id: string, updates: Partial<Omit<Notice, "id
     await updateDoc(docRef, cleanUpdates);
   } catch (error) {
     console.error("Error updating notice:", error);
-    throw new Error("Failed to update notice in Firestore");
+    throw new Error("在 Firestore 更新公告失敗");
   }
 }
 
@@ -226,13 +226,13 @@ export async function updateNotice(id: string, updates: Partial<Omit<Notice, "id
 export async function deleteNotice(id: string): Promise<void> {
   try {
     if (!db) {
-      throw new Error("Firebase not initialized");
+      throw new Error("Firebase 未初始化");
     }
     const docRef = doc(db, NOTICES_COLLECTION, id);
     await deleteDoc(docRef);
   } catch (error) {
     console.error("Error deleting notice:", error);
-    throw new Error("Failed to delete notice from Firestore");
+    throw new Error("從 Firestore 刪除公告失敗");
   }
 }
 

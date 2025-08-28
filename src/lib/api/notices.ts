@@ -25,7 +25,7 @@ export async function fetchNotices(params?: {
     return result;
   } catch (error) {
     console.error("Error fetching notices:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to fetch notices");
+    throw new Error(error instanceof Error ? error.message : "讀取公告失敗");
   }
 }
 
@@ -36,7 +36,7 @@ export async function fetchNotice(id: string): Promise<NoticeResponse> {
   try {
     const notice = await noticeService.getNoticeById(id);
     if (!notice) {
-      throw new Error("Notice not found");
+      throw new Error("找不到公告");
     }
     return { notice };
   } catch (error) {
@@ -50,7 +50,7 @@ export async function fetchNotice(id: string): Promise<NoticeResponse> {
       }
     } catch {}
     throw new Error(
-      error instanceof Error ? error.message : "Failed to fetch notice"
+      error instanceof Error ? error.message : "讀取公告失敗"
     );
   }
 }
@@ -68,11 +68,11 @@ export async function createNotice(data: CreateNoticeRequest): Promise<NoticeRes
     const notice = await noticeService.createNotice(noticeData);
     return { 
       notice,
-      message: "Notice created successfully" 
+      message: "已成功建立公告" 
     };
   } catch (error) {
     console.error("Error creating notice:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to create notice");
+    throw new Error(error instanceof Error ? error.message : "建立公告失敗");
   }
 }
 
@@ -85,16 +85,16 @@ export async function updateNotice(id: string, data: Partial<CreateNoticeRequest
     const notice = await noticeService.getNoticeById(id);
     
     if (!notice) {
-      throw new Error("Notice not found after update");
+      throw new Error("更新後找不到公告");
     }
     
     return { 
       notice,
-      message: "Notice updated successfully" 
+      message: "已成功更新公告" 
     };
   } catch (error) {
     console.error("Error updating notice:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to update notice");
+    throw new Error(error instanceof Error ? error.message : "更新公告失敗");
   }
 }
 
@@ -104,10 +104,10 @@ export async function updateNotice(id: string, data: Partial<CreateNoticeRequest
 export async function deleteNotice(id: string): Promise<{ message: string }> {
   try {
     await noticeService.deleteNotice(id);
-    return { message: "Notice deleted successfully" };
+    return { message: "已成功刪除公告" };
   } catch (error) {
     console.error("Error deleting notice:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to delete notice");
+    throw new Error(error instanceof Error ? error.message : "刪除公告失敗");
   }
 }
 

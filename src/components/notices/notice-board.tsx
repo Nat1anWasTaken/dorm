@@ -43,7 +43,7 @@ export function NoticeBoard() {
     try {
       await deleteNotice(notice.id);
     } catch {
-      alert("Failed to delete notice. Please try again.");
+      alert("刪除公告失敗，請再試一次。");
     }
   };
 
@@ -51,7 +51,7 @@ export function NoticeBoard() {
     try {
       await togglePin(notice);
     } catch {
-      alert("Failed to update notice. Please try again.");
+      alert("更新公告失敗，請再試一次。");
     }
   };
 
@@ -66,11 +66,11 @@ export function NoticeBoard() {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">
-                  Notice Board
+                  公告欄
                 </h1>
                 {isAdmin && (
                   <Button onClick={() => router.push("/notices/new")}>
-                    Create Notice
+                    建立公告
                   </Button>
                 )}
               </div>
@@ -81,17 +81,17 @@ export function NoticeBoard() {
                 className="mb-6"
               >
                 <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="events">Events</TabsTrigger>
-                  <TabsTrigger value="announcements">Announcements</TabsTrigger>
-                  <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+                  <TabsTrigger value="all">全部</TabsTrigger>
+                  <TabsTrigger value="events">活動</TabsTrigger>
+                  <TabsTrigger value="announcements">公告</TabsTrigger>
+                  <TabsTrigger value="maintenance">維護</TabsTrigger>
                 </TabsList>
               </Tabs>
 
               <div className="relative mb-6">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search notices"
+                  placeholder="搜尋公告"
                   className="pl-10 bg-white"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -101,7 +101,7 @@ export function NoticeBoard() {
 
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Latest Notices
+                最新公告
               </h2>
 
               {error && (
@@ -140,7 +140,7 @@ export function NoticeBoard() {
                     ))
                   ) : (
                     <div className="col-span-full text-center py-8 text-gray-500">
-                      No notices found.
+                      找不到任何公告。
                     </div>
                   )}
                 </div>

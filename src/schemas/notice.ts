@@ -5,14 +5,14 @@ export const NoticeCategory = z.enum(["events", "announcements", "maintenance"])
 
 // Core notice schema
 export const NoticeSchema = z.object({
-  id: z.string().min(1, "ID is required"),
-  title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
-  description: z.string().min(1, "Description is required").max(1000, "Description must be less than 1000 characters"),
-  content: z.string().min(1, "Content is required"), // Stored as plain text, rendered as markdown
+  id: z.string().min(1, "需要提供 ID"),
+  title: z.string().min(1, "需要提供標題").max(200, "標題長度須少於 200 個字元"),
+  description: z.string().min(1, "需要提供摘要").max(1000, "摘要長度須少於 1000 個字元"),
+  content: z.string().min(1, "需要提供內容"), // Stored as plain text, rendered as markdown
   category: NoticeCategory,
-  image: z.string().url("Invalid image URL").optional(),
+  image: z.string().url("圖片網址無效").optional(),
   isPinned: z.boolean().default(false),
-  createdAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
+  createdAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "日期格式無效（YYYY-MM-DD）"),
 });
 
 // Schema for creating a new notice
