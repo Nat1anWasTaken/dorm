@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -12,21 +12,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { type CreateNoticeRequest, type Notice } from "@/types/notice";
 import * as noticeApi from "@/lib/api/notices";
 import { toast } from "sonner";
+import { NoticeEditor } from "@/components/admin/notice-editor";
 
 type NoticeFormMode = "create" | "edit";
 
 export interface NoticeFormProps {
   mode?: NoticeFormMode;
   initialNotice?: Partial<Notice>;
-}
-
-async function fileToDataURL(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 }
 
 export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) {
@@ -39,10 +31,8 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
   );
   const [isPinned, setIsPinned] = useState<boolean>(Boolean(initialNotice?.isPinned));
   const [imageUrl, setImageUrl] = useState<string>(initialNotice?.image || "");
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(initialNotice?.image || null);
   const [submitting, setSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (imageUrl) {
@@ -64,13 +54,6 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
     [title, description, content, category, imagePreview, isPinned, initialNotice?.id, initialNotice?.createdAt]
   );
 
-  const onPickFile = async (file?: File) => {
-    if (!file) return;
-    setImageFile(file);
-    const dataUrl = await fileToDataURL(file);
-    setImagePreview(dataUrl);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !description.trim() || !content.trim()) {
@@ -80,11 +63,7 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
 
     setSubmitting(true);
     try {
-      let finalImage = imageUrl.trim();
-      if (!finalImage && imageFile && imagePreview) {
-        // Fallback: inline data URL if no upload backend
-        finalImage = imagePreview;
-      }
+      const finalImage = imageUrl.trim();
 
       const payload: CreateNoticeRequest = {
         title: title.trim(),
@@ -152,11 +131,9 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
           <Label>Image</Label>
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
-              <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>Upload Image</Button>
-              <Input type="url" placeholder="or paste image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => onPickFile(e.target.files?.[0] || undefined)} />
+              <Input type="url" placeholder="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
               {imagePreview && (
-                <Button type="button" variant="ghost" onClick={() => { setImagePreview(null); setImageFile(null); setImageUrl(""); }}>Remove</Button>
+                <Button type="button" variant="ghost" onClick={() => { setImagePreview(null); setImageUrl(""); }}>Remove</Button>
               )}
             </div>
             {imagePreview && (
@@ -169,8 +146,8 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="content">Full Content (Markdown supported)</Label>
-          <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={12} placeholder={"Write the full content..."} />
+          <Label>Full Content (Markdown supported)</Label>
+          <NoticeEditor content={content} onChange={setContent} />
         </div>
 
         <div className="flex items-center gap-3">

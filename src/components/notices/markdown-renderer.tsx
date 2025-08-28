@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
+import { $convertFromMarkdownString, TRANSFORMERS } from "@lexical/markdown";
 import {
   InitialConfigType,
   LexicalComposer,
-} from "@lexical/react/LexicalComposer"
-import { useEffect } from "react"
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
-import { TRANSFORMERS, $convertFromMarkdownString } from "@lexical/markdown"
+} from "@lexical/react/LexicalComposer";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { useEffect } from "react";
 
-import { editorTheme } from "@/components/editor/themes/editor-theme"
-import { ContentEditable } from "@/components/editor/editor-ui/content-editable"
-import { nodes } from "@/components/blocks/editor-00/nodes"
+import { nodes } from "@/components/blocks/editor-00/nodes";
+import { ContentEditable } from "@/components/editor/editor-ui/content-editable";
+import { editorTheme } from "@/components/editor/themes/editor-theme";
 
 function MarkdownImport({ markdown }: { markdown: string }) {
-  const [editor] = useLexicalComposerContext()
+  const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     editor.update(() => {
       // Clear and import markdown content into the editor
-      $convertFromMarkdownString(markdown, TRANSFORMERS)
-    })
-  }, [editor, markdown])
+      $convertFromMarkdownString(markdown, TRANSFORMERS);
+    });
+  }, [editor, markdown]);
 
-  return null
+  return null;
 }
 
 export function NoticeMarkdownRenderer({
@@ -32,9 +32,9 @@ export function NoticeMarkdownRenderer({
   className,
   minHeight = false,
 }: {
-  markdown: string
-  className?: string
-  minHeight?: boolean
+  markdown: string;
+  className?: string;
+  minHeight?: boolean;
 }) {
   const editorConfig: InitialConfigType = {
     namespace: "NoticeRenderer",
@@ -42,7 +42,7 @@ export function NoticeMarkdownRenderer({
     nodes,
     editable: false,
     onError: (error: Error) => console.error(error),
-  }
+  };
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
@@ -54,7 +54,9 @@ export function NoticeMarkdownRenderer({
               placeholder={""}
               className={
                 className ??
-                `ContentEditable__root relative block ${minHeight ? "min-h-72 min-h-full" : ""} overflow-auto px-8 py-4 focus:outline-none`
+                `ContentEditable__root relative block ${
+                  minHeight ? "min-h-full" : ""
+                } overflow-auto px-8 py-4 focus:outline-none`
               }
             />
           </div>
@@ -62,5 +64,5 @@ export function NoticeMarkdownRenderer({
         ErrorBoundary={LexicalErrorBoundary}
       />
     </LexicalComposer>
-  )
+  );
 }
