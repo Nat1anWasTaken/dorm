@@ -56,6 +56,8 @@ import {
   toggleNoticePin 
 } from "@/lib/api/notices";
 import { NoticeEditor } from "@/components/admin/notice-editor";
+import { NoticeMarkdownRenderer } from "@/components/notices/markdown-renderer";
+import { Container } from "@/components/ui/container";
 
 interface NoticeFormData {
   title: string;
@@ -239,16 +241,16 @@ export default function AdminNoticesPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-10">
+      <Container className="py-10">
         <div className="flex items-center justify-center h-64">
           <div className="text-lg">Loading notices...</div>
         </div>
-      </div>
+      </Container>
     );
   }
 
   return (
-    <div className="container mx-auto py-10">
+    <Container className="py-10">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold">Manage Notices</h1>
@@ -477,6 +479,6 @@ export default function AdminNoticesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </Container>
   );
 }

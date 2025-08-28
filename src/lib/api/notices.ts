@@ -1,5 +1,5 @@
 /**
- * API client functions for notice management
+ * Client functions for notice management using Firebase directly
  */
 
 import { 
@@ -8,9 +8,7 @@ import {
   type NoticeResponse,
   type NoticesListResponse 
 } from "@/types/notice";
-import { getAuthHeader } from "@/lib/firebase/admin";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import * as noticeService from "@/lib/firebase/notices";
 
 /**
  * Fetch all notices with optional filtering
@@ -22,109 +20,89 @@ export async function fetchNotices(params?: {
   offset?: number;
   pinned?: boolean;
 }): Promise<NoticesListResponse> {
-  const searchParams = new URLSearchParams();
-  
-  if (params?.category) searchParams.set('category', params.category);
-  if (params?.search) searchParams.set('search', params.search);
-  if (params?.limit) searchParams.set('limit', params.limit.toString());
-  if (params?.offset) searchParams.set('offset', params.offset.toString());
-  if (params?.pinned !== undefined) searchParams.set('pinned', params.pinned.toString());
-  
-  const url = `${API_BASE_URL}/api/notices${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
-  
-  const response = await fetch(url);
-  
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-    console.error("API Error:", errorData);
-    throw new Error(errorData.error || `Failed to fetch notices: ${response.statusText}`);
+  try {
+    const result = await noticeService.getNotices(params);
+    return result;
+  } catch (error) {
+    console.error("Error fetching notices:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to fetch notices");
   }
-  
-  return response.json();
 }
 
 /**
  * Fetch a specific notice by ID
  */
 export async function fetchNotice(id: string): Promise<NoticeResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/notices/${id}`);
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch notice: ${response.statusText}`);
+  try {
+    const notice = await noticeService.getNoticeById(id);
+    if (!notice) {
+      throw new Error("Notice not found");
+    }
+    return { notice };
+  } catch (error) {
+    console.error("Error fetching notice:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to fetch notice");
   }
-  
-  return response.json();
 }
 
 /**
- * Create a new notice (admin only)
+ * Create a new notice (handled by Firebase Security Rules)
  */
 export async function createNotice(data: CreateNoticeRequest): Promise<NoticeResponse> {
-  const authHeaders = await getAuthHeader();
-  
-  const response = await fetch(`${API_BASE_URL}/api/notices`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeaders
-    },
-    body: JSON.stringify(data)
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `Failed to create notice: ${response.statusText}`);
+  try {
+    const noticeData = {
+      ...data,
+      createdAt: new Date().toISOString().split("T")[0], // Format as YYYY-MM-DD
+    };
+    
+    const notice = await noticeService.createNotice(noticeData);
+    return { 
+      notice,
+      message: "Notice created successfully" 
+    };
+  } catch (error) {
+    console.error("Error creating notice:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to create notice");
   }
-  
-  return response.json();
 }
 
 /**
- * Update a notice (admin only)
+ * Update a notice (handled by Firebase Security Rules)
  */
 export async function updateNotice(id: string, data: Partial<CreateNoticeRequest>): Promise<NoticeResponse> {
-  const authHeaders = await getAuthHeader();
-  
-  const response = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeaders
-    },
-    body: JSON.stringify(data)
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `Failed to update notice: ${response.statusText}`);
+  try {
+    await noticeService.updateNotice(id, data);
+    const notice = await noticeService.getNoticeById(id);
+    
+    if (!notice) {
+      throw new Error("Notice not found after update");
+    }
+    
+    return { 
+      notice,
+      message: "Notice updated successfully" 
+    };
+  } catch (error) {
+    console.error("Error updating notice:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to update notice");
   }
-  
-  return response.json();
 }
 
 /**
- * Delete a notice (admin only)
+ * Delete a notice (handled by Firebase Security Rules)
  */
 export async function deleteNotice(id: string): Promise<{ message: string }> {
-  const authHeaders = await getAuthHeader();
-  
-  const response = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
-    method: 'DELETE',
-    headers: {
-      ...authHeaders
-    }
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `Failed to delete notice: ${response.statusText}`);
+  try {
+    await noticeService.deleteNotice(id);
+    return { message: "Notice deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting notice:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to delete notice");
   }
-  
-  return response.json();
 }
 
 /**
- * Toggle pin status of a notice (admin only)
+ * Toggle pin status of a notice
  */
 export async function toggleNoticePin(notice: Notice): Promise<NoticeResponse> {
   return updateNotice(notice.id, { isPinned: !notice.isPinned });

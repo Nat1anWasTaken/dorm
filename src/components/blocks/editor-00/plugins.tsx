@@ -1,6 +1,10 @@
 import { useState } from "react"
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
+import { ListPlugin } from "@lexical/react/LexicalListPlugin"
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin"
+import { TRANSFORMERS } from "@lexical/markdown"
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin"
 
 import { ContentEditable } from "@/components/editor/editor-ui/content-editable"
 
@@ -29,6 +33,9 @@ export function Plugins() {
           ErrorBoundary={LexicalErrorBoundary}
         />
         {/* editor plugins */}
+        <ListPlugin />
+        <LinkPlugin />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       </div>
       {/* actions plugins */}
     </div>

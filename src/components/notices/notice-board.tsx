@@ -1,20 +1,19 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Plus } from "lucide-react";
-import { useAdminClaims } from "@/hooks/use-admin";
+import { Search } from "lucide-react";
 import { useNotices } from "@/hooks/use-notices";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NoticeCard } from "./notice-card";
 import { PinnedNotices } from "./pinned-notices";
 import { type Notice } from "@/types/notice";
+import { Container } from "@/components/ui/container";
 
 export function NoticeBoard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
-  const { isAdmin } = useAdminClaims();
+  
 
   // Fetch notices with current filters
   const queryParams = useMemo(() => ({
@@ -28,13 +27,8 @@ export function NoticeBoard() {
     loading, 
     error, 
     deleteNotice, 
-    togglePin 
+    togglePin,
   } = useNotices(queryParams);
-
-  const handleCreateNotice = () => {
-    // TODO: Open create notice dialog/form
-    console.log("Create notice");
-  };
 
   const handleEditNotice = (notice: Notice) => {
     // TODO: Open edit notice dialog/form
@@ -63,19 +57,13 @@ export function NoticeBoard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <Container className="py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Notice Board */}
           <div className="flex-1">
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">Notice Board</h1>
-                {isAdmin && (
-                  <Button onClick={handleCreateNotice} className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    Create Notice
-                  </Button>
-                )}
               </div>
               
               <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
@@ -134,7 +122,7 @@ export function NoticeBoard() {
                     ))
                   ) : (
                     <div className="col-span-full text-center py-8 text-gray-500">
-                      No notices found. {isAdmin && "Create the first notice to get started!"}
+                      No notices found.
                     </div>
                   )}
                 </div>
@@ -172,7 +160,7 @@ export function NoticeBoard() {
             <PinnedNotices notices={pinnedNotices} />
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

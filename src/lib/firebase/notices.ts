@@ -15,7 +15,7 @@ import {
   orderBy, 
   limit
 } from "firebase/firestore";
-import { db } from "./server";
+import { db } from "./client";
 import { type Notice } from "@/types/notice";
 
 const NOTICES_COLLECTION = "notices";

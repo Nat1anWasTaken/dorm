@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Container } from "@/components/ui/container";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -31,7 +32,7 @@ export function Header() {
   }, [user]);
   return (
     <header className="border-b bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
@@ -92,7 +93,7 @@ export function Header() {
             )}
           </div>
         </div>
-      </div>
+      </Container>
     </header>
   );
 }
