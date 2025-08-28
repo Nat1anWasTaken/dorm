@@ -1,41 +1,15 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { NoticeForm } from "@/components/notices/notice-form";
-import * as noticeApi from "@/lib/api/notices";
-import { type Notice } from "@/types/notice";
 import { useAdminClaims } from "@/hooks/use-admin";
+import { useNotice } from "@/hooks/use-notice";
 
 export default function EditNoticePage() {
   const params = useParams();
   const id = params?.id as string | undefined;
-  const [notice, setNotice] = useState<Notice | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { notice, loading, error } = useNotice(id);
   const { isAdmin, loading: aclLoading } = useAdminClaims();
-
-  useEffect(() => {
-    let mounted = true;
-    async function load() {
-      if (!id) return;
-      try {
-        setLoading(true);
-        setError(null);
-        const { notice } = await noticeApi.fetchNotice(id);
-        if (mounted) setNotice(notice);
-      } catch (e) {
-        if (mounted) setError(e instanceof Error ? e.message : "Failed to load notice");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-    void load();
-    return () => {
-      mounted = false;
-    };
-  }, [id]);
 
   return (
     <div className="min-h-screen bg-gray-50">

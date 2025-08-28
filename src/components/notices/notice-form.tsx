@@ -1,18 +1,26 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { type CreateNoticeRequest, type Notice } from "@/types/notice";
-import * as noticeApi from "@/lib/api/notices";
-import { toast } from "sonner";
 import { NoticeEditor } from "@/components/admin/notice-editor";
 import { NoticeCard } from "@/components/notices/notice-card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { noticesKeys } from "@/hooks/use-notices";
+import * as noticeApi from "@/lib/api/notices";
+import { type CreateNoticeRequest, type Notice } from "@/types/notice";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 type NoticeFormMode = "create" | "edit";
 
@@ -21,17 +29,27 @@ export interface NoticeFormProps {
   initialNotice?: Partial<Notice>;
 }
 
-export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) {
+export function NoticeForm({
+  mode = "create",
+  initialNotice,
+}: NoticeFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState(initialNotice?.title || "");
-  const [description, setDescription] = useState(initialNotice?.description || "");
+  const [description, setDescription] = useState(
+    initialNotice?.description || ""
+  );
   const [content, setContent] = useState(initialNotice?.content || "");
   const [category, setCategory] = useState<Notice["category"]>(
     (initialNotice?.category as Notice["category"]) || "announcements"
   );
-  const [isPinned, setIsPinned] = useState<boolean>(Boolean(initialNotice?.isPinned));
+  const [isPinned, setIsPinned] = useState<boolean>(
+    Boolean(initialNotice?.isPinned)
+  );
   const [imageUrl, setImageUrl] = useState<string>(initialNotice?.image || "");
-  const [imagePreview, setImagePreview] = useState<string | null>(initialNotice?.image || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    initialNotice?.image || null
+  );
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -49,9 +67,19 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
       category,
       image: imagePreview || undefined,
       isPinned,
-      createdAt: initialNotice?.createdAt || new Date().toISOString().split("T")[0],
+      createdAt:
+        initialNotice?.createdAt || new Date().toISOString().split("T")[0],
     }),
-    [title, description, content, category, imagePreview, isPinned, initialNotice?.id, initialNotice?.createdAt]
+    [
+      title,
+      description,
+      content,
+      category,
+      imagePreview,
+      isPinned,
+      initialNotice?.id,
+      initialNotice?.createdAt,
+    ]
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,13 +104,18 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
 
       if (mode === "edit" && initialNotice?.id) {
         await noticeApi.updateNotice(initialNotice.id, payload);
+        await queryClient.invalidateQueries({ queryKey: noticesKeys.all });
+        await queryClient.invalidateQueries({
+          queryKey: noticesKeys.detail(initialNotice.id),
+        });
         toast.success("Notice updated");
       } else {
         await noticeApi.createNotice(payload);
+        await queryClient.invalidateQueries({ queryKey: noticesKeys.all });
         toast.success("Notice created");
       }
 
-      router.push("/notice-board");
+      router.push("/");
     } catch (err) {
       console.error(err);
       toast.error(err instanceof Error ? err.message : "Failed to save notice");
@@ -92,22 +125,39 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <form
+      onSubmit={handleSubmit}
+      className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+    >
       <div className="lg:col-span-2 space-y-6">
         <div className="space-y-2">
           <Label htmlFor="title">Title</Label>
-          <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., Water Maintenance on 21st" />
+          <Input
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g., Water Maintenance on 21st"
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="description">Short Description</Label>
-          <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="One or two sentences summary" />
+          <Textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            placeholder="One or two sentences summary"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={(val) => setCategory(val as Notice["category"])}>
+            <Select
+              value={category}
+              onValueChange={(val) => setCategory(val as Notice["category"])}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -121,8 +171,15 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
           <div className="space-y-2">
             <Label htmlFor="pinned">Pinned</Label>
             <div className="flex items-center gap-3 py-2">
-              <input id="pinned" type="checkbox" checked={isPinned} onChange={(e) => setIsPinned(e.target.checked)} />
-              <span className="text-sm text-gray-600">Show at top of board</span>
+              <input
+                id="pinned"
+                type="checkbox"
+                checked={isPinned}
+                onChange={(e) => setIsPinned(e.target.checked)}
+              />
+              <span className="text-sm text-gray-600">
+                Show at top of board
+              </span>
             </div>
           </div>
         </div>
@@ -130,9 +187,23 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
         <div className="space-y-2">
           <Label>Image</Label>
           <div className="flex items-center gap-3">
-            <Input type="url" placeholder="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+            <Input
+              type="url"
+              placeholder="Image URL"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+            />
             {imagePreview && (
-              <Button type="button" variant="ghost" onClick={() => { setImagePreview(null); setImageUrl(""); }}>Remove</Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setImagePreview(null);
+                  setImageUrl("");
+                }}
+              >
+                Remove
+              </Button>
             )}
           </div>
         </div>
@@ -143,8 +214,17 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
         </div>
 
         <div className="flex items-center gap-3">
-          <Button type="submit" disabled={submitting}>{mode === "edit" ? "Update Notice" : "Create Notice"}</Button>
-          <Button type="button" variant="outline" disabled={submitting} onClick={() => router.back()}>Cancel</Button>
+          <Button type="submit" disabled={submitting}>
+            {mode === "edit" ? "Update Notice" : "Create Notice"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={submitting}
+            onClick={() => router.back()}
+          >
+            Cancel
+          </Button>
         </div>
       </div>
 

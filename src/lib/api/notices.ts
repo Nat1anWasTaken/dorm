@@ -41,7 +41,17 @@ export async function fetchNotice(id: string): Promise<NoticeResponse> {
     return { notice };
   } catch (error) {
     console.error("Error fetching notice:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to fetch notice");
+    // Fallback to sample data when Firestore isn't available (local dev)
+    try {
+      const { sampleNotices } = await import("@/lib/data/sample-notices");
+      const fallback = sampleNotices.find((n) => n.id === id);
+      if (fallback) {
+        return { notice: fallback };
+      }
+    } catch {}
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to fetch notice"
+    );
   }
 }
 

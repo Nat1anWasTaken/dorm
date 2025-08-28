@@ -1,8 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Notice } from "@/types/notice";
 import * as noticeApi from "@/lib/api/notices";
+
+export const noticesKeys = {
+  all: ["notices"] as const,
+  list: (params?: unknown) => ["notices", params] as const,
+  detail: (id?: string) => ["notice", id] as const,
+};
 
 export function useNotices(params?: {
   category?: string;
@@ -11,96 +17,57 @@ export function useNotices(params?: {
   offset?: number;
   pinned?: boolean;
 }) {
-  const [notices, setNotices] = useState<Notice[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    async function fetchNotices() {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await noticeApi.fetchNotices(params);
-        setNotices(response.notices);
-        setTotal(response.total);
-      } catch (err) {
-        console.error("Error fetching notices:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch notices");
-      } finally {
-        setLoading(false);
-      }
-    }
+  const query = useQuery({
+    queryKey: noticesKeys.list(params),
+    queryFn: () => noticeApi.fetchNotices(params),
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+  });
 
-    fetchNotices();
-  }, [params]);
-
-  const refreshNotices = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await noticeApi.fetchNotices(params);
-      setNotices(response.notices);
-      setTotal(response.total);
-    } catch (err) {
-      console.error("Error refreshing notices:", err);
-      setError(err instanceof Error ? err.message : "Failed to refresh notices");
-    } finally {
-      setLoading(false);
-    }
+  const invalidateLists = async () => {
+    await queryClient.invalidateQueries({ queryKey: noticesKeys.all });
   };
 
-  const createNotice = async (data: Parameters<typeof noticeApi.createNotice>[0]) => {
-    try {
-      await noticeApi.createNotice(data);
-      await refreshNotices(); // Refresh the list after creating
-    } catch (err) {
-      console.error("Error creating notice:", err);
-      throw err;
-    }
-  };
+  const createMutation = useMutation({
+    mutationFn: noticeApi.createNotice,
+    onSuccess: () => void invalidateLists(),
+  });
 
-  const updateNotice = async (id: string, data: Parameters<typeof noticeApi.updateNotice>[1]) => {
-    try {
-      await noticeApi.updateNotice(id, data);
-      await refreshNotices(); // Refresh the list after updating
-    } catch (err) {
-      console.error("Error updating notice:", err);
-      throw err;
-    }
-  };
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof noticeApi.updateNotice>[1] }) =>
+      noticeApi.updateNotice(id, data),
+    onSuccess: (_res, variables) => {
+      void invalidateLists();
+      // also update detail cache for this id
+      queryClient.invalidateQueries({ queryKey: noticesKeys.detail(variables.id) });
+    },
+  });
 
-  const deleteNotice = async (id: string) => {
-    try {
-      await noticeApi.deleteNotice(id);
-      await refreshNotices(); // Refresh the list after deleting
-    } catch (err) {
-      console.error("Error deleting notice:", err);
-      throw err;
-    }
-  };
+  const deleteMutation = useMutation({
+    mutationFn: noticeApi.deleteNotice,
+    onSuccess: () => void invalidateLists(),
+  });
 
-  const togglePin = async (notice: Notice) => {
-    try {
-      await noticeApi.toggleNoticePin(notice);
-      await refreshNotices(); // Refresh the list after toggling pin
-    } catch (err) {
-      console.error("Error toggling pin:", err);
-      throw err;
-    }
-  };
+  const togglePinMutation = useMutation({
+    mutationFn: noticeApi.toggleNoticePin,
+    onSuccess: (_res, notice) => {
+      void invalidateLists();
+      queryClient.invalidateQueries({ queryKey: noticesKeys.detail(notice.id) });
+    },
+  });
 
   return {
-    notices,
-    total,
-    loading,
-    error,
-    refreshNotices,
-    createNotice,
-    updateNotice,
-    deleteNotice,
-    togglePin,
-  };
+    notices: query.data?.notices ?? [],
+    total: query.data?.total ?? 0,
+    loading: query.isLoading,
+    error: (query.error as Error | null)?.message ?? null,
+    refreshNotices: query.refetch,
+    createNotice: createMutation.mutateAsync,
+    updateNotice: (id: string, data: Parameters<typeof noticeApi.updateNotice>[1]) =>
+      updateMutation.mutateAsync({ id, data }),
+    deleteNotice: deleteMutation.mutateAsync,
+    togglePin: togglePinMutation.mutateAsync,
+  } as const;
 }
