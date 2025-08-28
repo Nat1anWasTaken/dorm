@@ -1,4 +1,4 @@
-# DORM
+# 北科東校區宿委會
 
 ## 目錄
 
@@ -12,7 +12,7 @@
 
 ## 簡介
 
-DORM 是一個以 Next.js 15 構建的宿舍佈告欄應用，支援公告張貼、編輯、刪除與釘選，並提供 Markdown 編輯與渲染、基本身分驗證與管理員權限。
+北科東校區宿委會 是一個以 Next.js 15 構建的宿舍佈告欄應用，支援公告張貼、編輯、刪除與釘選，並提供 Markdown 編輯與渲染、基本身分驗證與管理員權限。
 
 - 技術棧：Next.js 15、React 19、TypeScript、Tailwind CSS v4、shadcn/ui、@tanstack/react-query、Firebase（Auth + Firestore）
 - 前端框架：shadcn/ui（New York 風格）、Lucide React 圖示
