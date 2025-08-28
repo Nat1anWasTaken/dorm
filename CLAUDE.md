@@ -14,6 +14,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm build` - Build for production (uses Turbopack)
 - `pnpm start` - Start production server
 - `pnpm lint` - Run ESLint
+- `pnpm lint:fix` - Run ESLint with auto-fix
+- `pnpm format` - Format code with Prettier
+- `pnpm format:check` - Check code formatting with Prettier
+
+**Utility Scripts:**
+
+- `node scripts/set-admin.js <email>` - Set admin status for a user (requires Firebase service account)
+- `node scripts/seed-notices.js` - Seed sample notices data
+- `node scripts/check-env.js` - Validate environment variables
 
 ## Architecture
 
@@ -22,15 +31,21 @@ This is a Next.js 15 application using the App Router with TypeScript and Tailwi
 **Project Structure:**
 
 - `src/app/` - Next.js App Router pages and layouts
-- `src/lib/` - Utility functions and shared logic
+- `src/components/` - React components (ui, auth, notices, admin, editor)
+- `src/hooks/` - Custom React hooks
+- `src/lib/` - Utility functions, API clients, and Firebase config
+- `src/schemas/` - Zod validation schemas
+- `src/types/` - TypeScript type definitions
+- `scripts/` - Utility scripts for admin tasks
 - Uses `@/` alias for imports pointing to `src/`
 
 **UI Framework:**
 
 - Configured for shadcn/ui components with "new-york" style
 - Uses Lucide React for icons
-- Tailwind CSS with CSS variables enabled
-- Class composition utility function `cn()` in `src/lib/utils.ts:4`
+- Tailwind CSS v4 with CSS variables enabled
+- Class composition utility function `cn()` in `src/lib/utils.ts`
+- Prettier configured with Tailwind CSS plugin for class sorting
 
 **Dependencies:**
 
@@ -38,7 +53,10 @@ This is a Next.js 15 application using the App Router with TypeScript and Tailwi
 - TypeScript with strict mode
 - Tailwind CSS v4
 - Utility libraries: clsx, class-variance-authority, tailwind-merge
-- Font: Geist (automatically optimized via next/font)
+- Firebase v11 for auth and Firestore database
+- Lexical for rich text editing
+- Zod for schema validation
+- Sonner for toast notifications
 
 **shadcn/ui Configuration:**
 
