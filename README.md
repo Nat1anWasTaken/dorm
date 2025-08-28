@@ -43,7 +43,7 @@
 
    ```bash
    pnpm build
-   pnpm start`
+   pnpm start
    ```
 
 ### Docker
