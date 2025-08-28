@@ -13,6 +13,8 @@ import { type Notice, type NoticeCardProps } from "@/types/notice";
 import { Edit, Pin, PinOff, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useState } from "react";
+import DeleteNoticeDialog from "@/components/notices/delete-notice-dialog";
 
 export function NoticeCard({
   notice,
@@ -21,6 +23,7 @@ export function NoticeCard({
   onDelete,
   onTogglePin,
 }: NoticeCardProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { isAdmin } = useAdminClaims();
   const getCategoryColor = (category: Notice["category"]) => {
     switch (category) {
@@ -107,7 +110,7 @@ export function NoticeCard({
                   className="h-8 w-8 p-0"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onDelete?.(notice);
+                    setShowDeleteDialog(true);
                   }}
                 >
                   <Trash2 className="h-3 w-3" />
@@ -131,6 +134,18 @@ export function NoticeCard({
           {notice.description}
         </p>
       </CardContent>
+      {isAdmin && (
+        <DeleteNoticeDialog
+          open={showDeleteDialog}
+          onOpenChange={setShowDeleteDialog}
+          title="Delete Notice"
+          description={`Are you sure you want to delete "${notice.title}"? This action cannot be undone.`}
+          onConfirm={async () => {
+            if (!onDelete) return;
+            await onDelete(notice);
+          }}
+        />
+      )}
     </Card>
   );
 }

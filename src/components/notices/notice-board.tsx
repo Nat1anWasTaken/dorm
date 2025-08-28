@@ -40,12 +40,10 @@ export function NoticeBoard() {
   };
 
   const handleDeleteNotice = async (notice: Notice) => {
-    if (confirm(`Are you sure you want to delete "${notice.title}"?`)) {
-      try {
-        await deleteNotice(notice.id);
-      } catch {
-        alert("Failed to delete notice. Please try again.");
-      }
+    try {
+      await deleteNotice(notice.id);
+    } catch {
+      alert("Failed to delete notice. Please try again.");
     }
   };
 
