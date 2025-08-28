@@ -1,11 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo } from "react";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
-import { useCurrentUser } from "@/hooks/use-auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,13 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Container } from "@/components/ui/container";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { auth } from "@/lib/firebase/client";
+import { signOut } from "firebase/auth";
+import Link from "next/link";
+import { useMemo } from "react";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Events", href: "/events" },
-  { name: "Notice Board", href: "/notice-board" },
   { name: "Committee", href: "/committee" },
 ];
 
