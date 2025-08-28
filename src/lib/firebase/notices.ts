@@ -87,6 +87,9 @@ export async function getNotices(params?: {
       };
     }
     
+    if (!db) {
+      throw new Error("Firebase not initialized");
+    }
     const noticesRef = collection(db, NOTICES_COLLECTION);
     console.log("Collection reference created:", noticesRef ? "✅ Success" : "❌ Failed");
     let noticeQuery = query(noticesRef, orderBy("createdAt", "desc"));
@@ -129,6 +132,10 @@ export async function getNotices(params?: {
     };
   } catch (error) {
     console.error("Error fetching notices:", error);
+    // Re-throw the original error to preserve Firebase error information
+    if (error instanceof Error) {
+      throw error;
+    }
     throw new Error("Failed to fetch notices from Firestore");
   }
 }
@@ -138,6 +145,9 @@ export async function getNotices(params?: {
  */
 export async function getNoticeById(id: string): Promise<Notice | null> {
   try {
+    if (!db) {
+      throw new Error("Firebase not initialized");
+    }
     const docRef = doc(db, NOTICES_COLLECTION, id);
     const docSnap = await getDoc(docRef);
 
@@ -157,6 +167,9 @@ export async function getNoticeById(id: string): Promise<Notice | null> {
  */
 export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Notice> {
   try {
+    if (!db) {
+      throw new Error("Firebase not initialized");
+    }
     const docRef = await addDoc(collection(db, NOTICES_COLLECTION), {
       title: noticeData.title,
       description: noticeData.description,
@@ -184,6 +197,9 @@ export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Noti
  */
 export async function updateNotice(id: string, updates: Partial<Omit<Notice, "id">>): Promise<void> {
   try {
+    if (!db) {
+      throw new Error("Firebase not initialized");
+    }
     const docRef = doc(db, NOTICES_COLLECTION, id);
     
     // Remove undefined values
@@ -203,6 +219,9 @@ export async function updateNotice(id: string, updates: Partial<Omit<Notice, "id
  */
 export async function deleteNotice(id: string): Promise<void> {
   try {
+    if (!db) {
+      throw new Error("Firebase not initialized");
+    }
     const docRef = doc(db, NOTICES_COLLECTION, id);
     await deleteDoc(docRef);
   } catch (error) {

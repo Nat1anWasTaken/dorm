@@ -46,6 +46,17 @@ export async function GET(request: NextRequest): Promise<NextResponse<NoticesLis
     return NextResponse.json(response);
   } catch (error) {
     console.error("Error fetching notices:", error);
+    
+    // Handle Firebase permission errors specifically
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'permission-denied') {
+        return NextResponse.json(
+          { error: "Insufficient permissions to access notices. Please check Firestore security rules." },
+          { status: 403 }
+        );
+      }
+    }
+    
     return NextResponse.json(
       { error: "Failed to fetch notices" },
       { status: 500 }
