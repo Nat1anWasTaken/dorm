@@ -24,7 +24,7 @@ export function NoticeCard({ notice, onEdit, onDelete, onTogglePin }: NoticeCard
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
       <div className="aspect-[4/3] relative bg-gray-100">
         {notice.image ? (
           <Image
@@ -46,7 +46,7 @@ export function NoticeCard({ notice, onEdit, onDelete, onTogglePin }: NoticeCard
           </Badge>
         )}
         {isAdmin && (
-          <div className="absolute top-3 left-3 flex gap-1">
+          <div className="absolute top-3 left-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button
               size="sm"
               variant="secondary"

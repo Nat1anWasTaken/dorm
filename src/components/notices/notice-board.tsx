@@ -1,39 +1,39 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
-import { useNotices } from "@/hooks/use-notices";
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAdminClaims } from "@/hooks/use-admin";
+import { useNotices } from "@/hooks/use-notices";
+import { type Notice } from "@/types/notice";
+import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { NoticeCard } from "./notice-card";
 import { PinnedNotices } from "./pinned-notices";
-import { type Notice } from "@/types/notice";
-import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useAdminClaims } from "@/hooks/use-admin";
 
 export function NoticeBoard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const router = useRouter();
   const { isAdmin } = useAdminClaims();
-  
 
   // Fetch notices with current filters
-  const queryParams = useMemo(() => ({
-    category: activeTab === "all" ? undefined : activeTab as "events" | "announcements" | "maintenance",
-    search: searchTerm.trim() || undefined,
-    limit: 50, // Reasonable limit for now
-  }), [activeTab, searchTerm]);
+  const queryParams = useMemo(
+    () => ({
+      category:
+        activeTab === "all"
+          ? undefined
+          : (activeTab as "events" | "announcements" | "maintenance"),
+      search: searchTerm.trim() || undefined,
+      limit: 50, // Reasonable limit for now
+    }),
+    [activeTab, searchTerm]
+  );
 
-  const { 
-    notices, 
-    loading, 
-    error, 
-    deleteNotice, 
-    togglePin,
-  } = useNotices(queryParams);
+  const { notices, loading, error, deleteNotice, togglePin } =
+    useNotices(queryParams);
 
   const handleEditNotice = (notice: Notice) => {
     router.push(`/notices/${notice.id}/edit`);
@@ -57,7 +57,7 @@ export function NoticeBoard() {
     }
   };
 
-  const pinnedNotices = notices.filter(notice => notice.isPinned);
+  const pinnedNotices = notices.filter((notice) => notice.isPinned);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -67,13 +67,21 @@ export function NoticeBoard() {
           <div className="flex-1">
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold text-gray-900">Notice Board</h1>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Notice Board
+                </h1>
                 {isAdmin && (
-                  <Button onClick={() => router.push("/notices/new")}>Create Notice</Button>
+                  <Button onClick={() => router.push("/notices/new")}>
+                    Create Notice
+                  </Button>
                 )}
               </div>
-              
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="mb-6"
+              >
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="all">All</TabsTrigger>
                   <TabsTrigger value="events">Events</TabsTrigger>
@@ -94,18 +102,23 @@ export function NoticeBoard() {
             </div>
 
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Latest Notices</h2>
-              
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Latest Notices
+              </h2>
+
               {error && (
                 <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
                   <p className="text-red-600">{error}</p>
                 </div>
               )}
-              
+
               {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+                    <div
+                      key={i}
+                      className="bg-white rounded-lg shadow-md p-4 animate-pulse"
+                    >
                       <div className="aspect-[4/3] bg-gray-200 rounded mb-4"></div>
                       <div className="space-y-2">
                         <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -116,11 +129,11 @@ export function NoticeBoard() {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {notices.length > 0 ? (
                     notices.map((notice) => (
-                      <NoticeCard 
-                        key={notice.id} 
+                      <NoticeCard
+                        key={notice.id}
                         notice={notice}
                         onEdit={handleEditNotice}
                         onDelete={handleDeleteNotice}
