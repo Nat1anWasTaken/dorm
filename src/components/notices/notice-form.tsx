@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +12,7 @@ import { type CreateNoticeRequest, type Notice } from "@/types/notice";
 import * as noticeApi from "@/lib/api/notices";
 import { toast } from "sonner";
 import { NoticeEditor } from "@/components/admin/notice-editor";
+import { NoticeCard } from "@/components/notices/notice-card";
 
 type NoticeFormMode = "create" | "edit";
 
@@ -129,18 +129,10 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
 
         <div className="space-y-2">
           <Label>Image</Label>
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <Input type="url" placeholder="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-              {imagePreview && (
-                <Button type="button" variant="ghost" onClick={() => { setImagePreview(null); setImageUrl(""); }}>Remove</Button>
-              )}
-            </div>
+          <div className="flex items-center gap-3">
+            <Input type="url" placeholder="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
             {imagePreview && (
-              <div className="relative w-full max-w-md aspect-[4/3] rounded-md overflow-hidden border">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imagePreview} alt="Selected" className="object-cover w-full h-full" />
-              </div>
+              <Button type="button" variant="ghost" onClick={() => { setImagePreview(null); setImageUrl(""); }}>Remove</Button>
             )}
           </div>
         </div>
@@ -160,27 +152,7 @@ export function NoticeForm({ mode = "create", initialNotice }: NoticeFormProps) 
         <Card>
           <CardContent className="p-4">
             <div className="text-sm text-gray-500 mb-2">Live Preview</div>
-            {/* We inline a minimal preview to avoid admin-only buttons from NoticeCard */}
-            <div className="overflow-hidden rounded-lg border">
-              <div className="aspect-[4/3] relative bg-gray-100">
-                {imagePreview ? (
-                  <Image src={imagePreview} alt={title || "Preview"} fill className="object-cover" />
-                ) : (
-                  <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-100 to-gray-200">
-                    <div className="w-16 h-16 bg-gray-300 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl text-gray-500">📋</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="p-4">
-                <div className="mb-2 inline-block rounded px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800">
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </div>
-                <div className="font-semibold text-lg mb-2">{title || "Untitled Notice"}</div>
-                <div className="text-sm text-gray-600">{description || "Short description will appear here."}</div>
-              </div>
-            </div>
+            <NoticeCard notice={previewNotice} showAdminControls={false} />
           </CardContent>
         </Card>
       </div>

@@ -1,15 +1,26 @@
 "use client";
 
-import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Pin, PinOff } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useAdminClaims } from "@/hooks/use-admin";
 import { type Notice, type NoticeCardProps } from "@/types/notice";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Edit, Pin, PinOff, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { toast } from "sonner";
 
-export function NoticeCard({ notice, onEdit, onDelete, onTogglePin }: NoticeCardProps) {
+export function NoticeCard({
+  notice,
+  showAdminControls = true,
+  onEdit,
+  onDelete,
+  onTogglePin,
+}: NoticeCardProps) {
   const { isAdmin } = useAdminClaims();
   const getCategoryColor = (category: Notice["category"]) => {
     switch (category) {
@@ -46,7 +57,7 @@ export function NoticeCard({ notice, onEdit, onDelete, onTogglePin }: NoticeCard
             Pinned
           </Badge>
         )}
-        {isAdmin && (
+        {isAdmin && showAdminControls && (
           <div className="absolute top-3 left-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -76,10 +87,16 @@ export function NoticeCard({ notice, onEdit, onDelete, onTogglePin }: NoticeCard
                     onTogglePin?.(notice);
                   }}
                 >
-                  {notice.isPinned ? <PinOff className="h-3 w-3" /> : <Pin className="h-3 w-3" />}
+                  {notice.isPinned ? (
+                    <PinOff className="h-3 w-3" />
+                  ) : (
+                    <Pin className="h-3 w-3" />
+                  )}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{notice.isPinned ? "Unpin" : "Pin"}</TooltipContent>
+              <TooltipContent>
+                {notice.isPinned ? "Unpin" : "Pin"}
+              </TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -107,8 +124,12 @@ export function NoticeCard({ notice, onEdit, onDelete, onTogglePin }: NoticeCard
             {notice.category.charAt(0).toUpperCase() + notice.category.slice(1)}
           </Badge>
         </div>
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2">{notice.title}</h3>
-        <p className="text-sm text-gray-600 line-clamp-3">{notice.description}</p>
+        <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+          {notice.title}
+        </h3>
+        <p className="text-sm text-gray-600 line-clamp-3">
+          {notice.description}
+        </p>
       </CardContent>
     </Card>
   );

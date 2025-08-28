@@ -15,6 +15,7 @@ export interface Notice {
 
 export interface NoticeCardProps {
   notice: Notice;
+  showAdminControls?: boolean;
   onEdit?: (notice: Notice) => void;
   onDelete?: (notice: Notice) => void;
   onTogglePin?: (notice: Notice) => void;

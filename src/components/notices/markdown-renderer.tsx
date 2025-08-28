@@ -48,19 +48,7 @@ export function NoticeMarkdownRenderer({
     <LexicalComposer initialConfig={editorConfig}>
       <MarkdownImport markdown={markdown} />
       <RichTextPlugin
-        contentEditable={
-          <div>
-            <ContentEditable
-              placeholder={""}
-              className={
-                className ??
-                `ContentEditable__root relative block ${
-                  minHeight ? "min-h-full" : ""
-                } overflow-auto px-8 py-4 focus:outline-none`
-              }
-            />
-          </div>
-        }
+        contentEditable={<ContentEditable placeholder={""} />}
         ErrorBoundary={LexicalErrorBoundary}
       />
     </LexicalComposer>

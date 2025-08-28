@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useRef } from "react"
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
 import { ListPlugin } from "@lexical/react/LexicalListPlugin"
@@ -9,14 +9,11 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin"
 import { ContentEditable } from "@/components/editor/editor-ui/content-editable"
 
 export function Plugins() {
-  const [, setFloatingAnchorElem] =
-    useState<HTMLDivElement | null>(null)
-
-  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
-    if (_floatingAnchorElem !== null) {
-      setFloatingAnchorElem(_floatingAnchorElem)
-    }
-  }
+  const floatingAnchorElem = useRef<HTMLDivElement | null>(null)
+  const onRef = useCallback((elem: HTMLDivElement | null) => {
+    // store without causing re-renders
+    floatingAnchorElem.current = elem
+  }, [])
 
   return (
     <div className="relative">
