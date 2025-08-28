@@ -72,11 +72,31 @@ This is a Next.js 15 application using the App Router with TypeScript and Tailwi
 - If a shadcn/ui component doesn't exist, use the CLI: `pnpm dlx shadcn@latest add <component-name>`
 - Only create custom components when shadcn/ui doesn't provide the needed functionality
 
+**Firebase Integration:**
+
+- Client-side Firebase config in `src/lib/firebase/client.ts`
+- Server-side Firebase admin in `src/lib/firebase/admin.ts`
+- Firestore operations in `src/lib/firebase/notices.ts`
+- Authentication state management in `src/hooks/use-auth.ts`
+- Admin role checking in `src/hooks/use-admin.ts`
+
+**Rich Text Editor:**
+
+- Lexical editor implementation in `src/components/editor/`
+- Custom nodes and plugins in `src/components/blocks/editor-00/`
+- Editor theme configuration in `src/components/editor/themes/`
+
+**Code Quality:**
+
+- ESLint configured with Next.js, TypeScript, and Prettier integration
+- Prettier with Tailwind CSS class sorting
+- TypeScript strict mode enabled
+
 ## Data Fetching
 
 - Always use `@tanstack/react-query` for client-side data fetching, caching, and mutations. Prefer `useQuery` for reads and `useMutation` for writes.
-- The app is already wrapped with a `QueryClientProvider` in `src/components/auth-provider.tsx:1`, which is used in `src/app/layout.tsx:1`. Do not add duplicate providers.
-- Define query keys as stable arrays (for example, `["notices", params]` and `["notice", id]`) and colocate domain hooks in `@/hooks` (see `src/hooks/use-notices.ts:1`).
+- The app is already wrapped with a `QueryClientProvider` in `src/components/auth-provider.tsx`, which is used in `src/app/layout.tsx`. Do not add duplicate providers.
+- Define query keys as stable arrays (for example, `["notices", params]` and `["notice", id]`) and colocate domain hooks in `@/hooks` (see `src/hooks/use-notices.ts`).
 - Invalidate or update caches on mutation success (for example, `queryClient.invalidateQueries({ queryKey: ["notices"] })`). Prefer invalidation over manual cache writes unless doing focused updates.
 - Avoid ad-hoc `fetch` in client components and avoid alternative client data libraries (for example, SWR). Use direct `fetch` only in server components or route handlers where React Query does not apply.
 - Set `staleTime` thoughtfully to reduce unnecessary refetches; use `enabled` to guard queries that depend on required params/IDs.
@@ -86,54 +106,55 @@ This is a Next.js 15 application using the App Router with TypeScript and Tailwi
 ```ts
 "use client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as api from "@/lib/api/foos"; // domain client functions
+import * as api from "@/lib/api/notices";
 
-export const fooKeys = {
-  all: ["foos"] as const,
-  list: (params?: unknown) => ["foos", params] as const,
-  detail: (id?: string) => ["foo", id] as const,
+export const noticesKeys = {
+  all: ["notices"] as const,
+  list: (params?: unknown) => ["notices", params] as const,
+  detail: (id?: string) => ["notice", id] as const,
 };
 
-export function useFoos(params?: { search?: string }) {
-  const qc = useQueryClient();
+export function useNotices(params?: { category?: string; search?: string }) {
+  const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: fooKeys.list(params),
-    queryFn: () => api.fetchFoos(params),
+    queryKey: noticesKeys.list(params),
+    queryFn: () => api.fetchNotices(params),
     staleTime: 30_000,
+    gcTime: 5 * 60_000,
   });
 
-  const createFoo = useMutation({
-    mutationFn: api.createFoo,
-    onSuccess: () => qc.invalidateQueries({ queryKey: fooKeys.all }),
+  const createMutation = useMutation({
+    mutationFn: api.createNotice,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: noticesKeys.all });
+    },
   });
 
-  const updateFoo = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
-      api.updateFoo(id, data),
-    onSuccess: (_res, { id }) => {
-      qc.invalidateQueries({ queryKey: fooKeys.all });
-      qc.invalidateQueries({ queryKey: fooKeys.detail(id) });
-      // Alternatively, do a focused update:
-      // qc.setQueryData(fooKeys.detail(id), (prev) => prev ? { ...prev, ..._res.foo } : prev);
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => 
+      api.updateNotice(id, data),
+    onSuccess: (_res, variables) => {
+      queryClient.invalidateQueries({ queryKey: noticesKeys.all });
+      queryClient.invalidateQueries({ queryKey: noticesKeys.detail(variables.id) });
     },
   });
 
   return {
-    foos: query.data?.items ?? [],
+    notices: query.data?.notices ?? [],
     total: query.data?.total ?? 0,
     loading: query.isLoading,
     error: (query.error as Error | null)?.message ?? null,
-    refresh: query.refetch,
-    createFoo: createFoo.mutateAsync,
-    updateFoo: updateFoo.mutateAsync,
+    refreshNotices: query.refetch,
+    createNotice: createMutation.mutateAsync,
+    updateNotice: (id: string, data: any) => updateMutation.mutateAsync({ id, data }),
   } as const;
 }
 
-export function useFoo(id?: string) {
+export function useNotice(id?: string) {
   return useQuery({
-    queryKey: fooKeys.detail(id),
-    queryFn: () => api.fetchFoo(id!),
+    queryKey: noticesKeys.detail(id),
+    queryFn: () => api.fetchNotice(id!),
     enabled: !!id,
     staleTime: 60_000,
   });
