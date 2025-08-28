@@ -47,6 +47,73 @@ This is a Next.js 15 application using the App Router with TypeScript and Tailwi
 - If a shadcn/ui component doesn't exist, use the CLI: `pnpm dlx shadcn@latest add <component-name>`
 - Only create custom components when shadcn/ui doesn't provide the needed functionality
 
+## Data Fetching
+
+- Always use `@tanstack/react-query` for client-side data fetching, caching, and mutations. Prefer `useQuery` for reads and `useMutation` for writes.
+- The app is already wrapped with a `QueryClientProvider` in `src/components/auth-provider.tsx:1`, which is used in `src/app/layout.tsx:1`. Do not add duplicate providers.
+- Define query keys as stable arrays (for example, `["notices", params]` and `["notice", id]`) and colocate domain hooks in `@/hooks` (see `src/hooks/use-notices.ts:1`).
+- Invalidate or update caches on mutation success (for example, `queryClient.invalidateQueries({ queryKey: ["notices"] })`). Prefer invalidation over manual cache writes unless doing focused updates.
+- Avoid ad-hoc `fetch` in client components and avoid alternative client data libraries (for example, SWR). Use direct `fetch` only in server components or route handlers where React Query does not apply.
+- Set `staleTime` thoughtfully to reduce unnecessary refetches; use `enabled` to guard queries that depend on required params/IDs.
+
+**Example Pattern (Hooks):**
+
+```ts
+"use client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import * as api from "@/lib/api/foos"; // domain client functions
+
+export const fooKeys = {
+  all: ["foos"] as const,
+  list: (params?: unknown) => ["foos", params] as const,
+  detail: (id?: string) => ["foo", id] as const,
+};
+
+export function useFoos(params?: { search?: string }) {
+  const qc = useQueryClient();
+
+  const query = useQuery({
+    queryKey: fooKeys.list(params),
+    queryFn: () => api.fetchFoos(params),
+    staleTime: 30_000,
+  });
+
+  const createFoo = useMutation({
+    mutationFn: api.createFoo,
+    onSuccess: () => qc.invalidateQueries({ queryKey: fooKeys.all }),
+  });
+
+  const updateFoo = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => api.updateFoo(id, data),
+    onSuccess: (_res, { id }) => {
+      qc.invalidateQueries({ queryKey: fooKeys.all });
+      qc.invalidateQueries({ queryKey: fooKeys.detail(id) });
+      // Alternatively, do a focused update:
+      // qc.setQueryData(fooKeys.detail(id), (prev) => prev ? { ...prev, ..._res.foo } : prev);
+    },
+  });
+
+  return {
+    foos: query.data?.items ?? [],
+    total: query.data?.total ?? 0,
+    loading: query.isLoading,
+    error: (query.error as Error | null)?.message ?? null,
+    refresh: query.refetch,
+    createFoo: createFoo.mutateAsync,
+    updateFoo: updateFoo.mutateAsync,
+  } as const;
+}
+
+export function useFoo(id?: string) {
+  return useQuery({
+    queryKey: fooKeys.detail(id),
+    queryFn: () => api.fetchFoo(id!),
+    enabled: !!id,
+    staleTime: 60_000,
+  });
+}
+```
+
 ## Documentation Research
 
 **Context7 Integration:**
