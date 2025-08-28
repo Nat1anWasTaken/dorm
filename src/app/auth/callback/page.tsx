@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 
@@ -17,7 +17,7 @@ import { auth } from "@/lib/firebase/client";
 
 const EMAIL_FOR_SIGN_IN_KEY = "firebase_email_for_sign_in";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter();
   const search = useSearchParams();
   const [email, setEmail] = useState("");
@@ -135,5 +135,19 @@ export default function AuthCallbackPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="grid min-h-[calc(100dvh-4rem)] place-items-center">
+          載入中...
+        </div>
+      }
+    >
+      <AuthCallbackContent />
+    </Suspense>
   );
 }

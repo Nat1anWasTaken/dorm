@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 import EmailPasswordLoginForm from "@/components/auth/email-password-login-form";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function LoginPage() {
+function LoginContent() {
   const search = useSearchParams();
   const continueUrl =
     search?.get("continueUrl") || search?.get("continue") || "/";
@@ -62,5 +63,19 @@ export default function LoginPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="grid min-h-[calc(100dvh-4rem)] place-items-center">
+          載入中...
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }

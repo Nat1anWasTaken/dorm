@@ -132,11 +132,13 @@ export function useNotices(params?: { category?: string; search?: string }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => 
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
       api.updateNotice(id, data),
     onSuccess: (_res, variables) => {
       queryClient.invalidateQueries({ queryKey: noticesKeys.all });
-      queryClient.invalidateQueries({ queryKey: noticesKeys.detail(variables.id) });
+      queryClient.invalidateQueries({
+        queryKey: noticesKeys.detail(variables.id),
+      });
     },
   });
 
@@ -147,7 +149,8 @@ export function useNotices(params?: { category?: string; search?: string }) {
     error: (query.error as Error | null)?.message ?? null,
     refreshNotices: query.refetch,
     createNotice: createMutation.mutateAsync,
-    updateNotice: (id: string, data: any) => updateMutation.mutateAsync({ id, data }),
+    updateNotice: (id: string, data: any) =>
+      updateMutation.mutateAsync({ id, data }),
   } as const;
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 import MagicLinkForm from "@/components/auth/magic-link-form";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function RegisterPage() {
+function RegisterContent() {
   const search = useSearchParams();
   const continueUrl =
     search?.get("continueUrl") || search?.get("continue") || "/";
@@ -58,5 +59,19 @@ export default function RegisterPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="grid min-h-[calc(100dvh-4rem)] place-items-center">
+          載入中...
+        </div>
+      }
+    >
+      <RegisterContent />
+    </Suspense>
   );
 }
