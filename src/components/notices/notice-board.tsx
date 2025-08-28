@@ -5,11 +5,11 @@ import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdminClaims } from "@/hooks/use-admin";
-import { useNotices } from "@/hooks/use-notices";
+import { useInfiniteNotices, useNotices } from "@/hooks/use-notices";
 import { type Notice } from "@/types/notice";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { NoticeCard } from "./notice-card";
 import { PinnedNotices } from "./pinned-notices";
 
@@ -18,8 +18,9 @@ export function NoticeBoard() {
   const [activeTab, setActiveTab] = useState("all");
   const router = useRouter();
   const { isAdmin } = useAdminClaims();
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // Fetch notices with current filters
+  // Infinite query params
   const queryParams = useMemo(
     () => ({
       category:
@@ -27,13 +28,42 @@ export function NoticeBoard() {
           ? undefined
           : (activeTab as "events" | "announcements" | "maintenance"),
       search: searchTerm.trim() || undefined,
-      limit: 50, // Reasonable limit for now
+      pageSize: 8, // Load 8 notices at a time
     }),
     [activeTab, searchTerm]
   );
 
-  const { notices, loading, error, deleteNotice, togglePin } =
-    useNotices(queryParams);
+  const {
+    notices,
+    loading,
+    loadingMore,
+    hasNextPage,
+    error,
+    fetchNextPage,
+    deleteNotice,
+    togglePin,
+  } = useInfiniteNotices(queryParams);
+
+  // Get pinned notices separately
+  const { notices: pinnedNotices } = useNotices({ pinned: true });
+
+  // Intersection Observer for infinite loading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0]?.isIntersecting && hasNextPage && !loadingMore) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, loadingMore]);
 
   const handleEditNotice = (notice: Notice) => {
     router.push(`/notices/${notice.id}/edit`);
@@ -54,8 +84,6 @@ export function NoticeBoard() {
       alert("更新公告失敗，請再試一次。");
     }
   };
-
-  const pinnedNotices = notices.filter(notice => notice.isPinned);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -125,49 +153,54 @@ export function NoticeBoard() {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {notices.length > 0 ? (
-                    notices.map(notice => (
-                      <NoticeCard
-                        key={notice.id}
-                        notice={notice}
-                        onEdit={handleEditNotice}
-                        onDelete={handleDeleteNotice}
-                        onTogglePin={handleTogglePin}
-                      />
-                    ))
-                  ) : (
-                    <div className="col-span-full py-8 text-center text-gray-500">
-                      找不到任何公告。
+                <div className="space-y-8">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {notices.length > 0 ? (
+                      notices.map((notice, index) => (
+                        <div
+                          key={notice.id}
+                          className="animate-in fade-in-0 slide-in-from-bottom-4"
+                          style={{
+                            animationDelay: `${(index % 8) * 100}ms`,
+                            animationFillMode: "both",
+                          }}
+                        >
+                          <NoticeCard
+                            notice={notice}
+                            onEdit={handleEditNotice}
+                            onDelete={handleDeleteNotice}
+                            onTogglePin={handleTogglePin}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <div className="col-span-full py-8 text-center text-gray-500">
+                        找不到任何公告。
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Infinite loading trigger and indicator */}
+                  {hasNextPage && (
+                    <div ref={loadMoreRef} className="flex justify-center py-8">
+                      {loadingMore ? (
+                        <div className="flex items-center space-x-2 text-gray-500">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>載入更多公告...</span>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          onClick={() => fetchNextPage()}
+                          disabled={loadingMore}
+                        >
+                          載入更多
+                        </Button>
+                      )}
                     </div>
                   )}
                 </div>
               )}
-            </div>
-
-            {/* Pagination Placeholder */}
-            <div className="flex items-center justify-center space-x-2">
-              <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                ‹
-              </button>
-              <button className="rounded bg-blue-600 px-3 py-2 text-sm text-white">
-                1
-              </button>
-              <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                2
-              </button>
-              <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                3
-              </button>
-              <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                4
-              </button>
-              <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                5
-              </button>
-              <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                ›
-              </button>
             </div>
           </div>
 

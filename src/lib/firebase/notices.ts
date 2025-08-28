@@ -14,6 +14,7 @@ import {
   where,
   orderBy,
   limit,
+  startAfter,
 } from "firebase/firestore";
 import { db } from "./client";
 import { type Notice } from "@/types/notice";
@@ -265,4 +266,144 @@ export async function deleteNotice(id: string): Promise<void> {
 export async function getPinnedNotices(): Promise<Notice[]> {
   const result = await getNotices({ pinned: true });
   return result.notices;
+}
+
+/**
+ * Fetch notices for infinite scrolling with cursor-based pagination
+ */
+export async function getNoticesInfinite(params?: {
+  category?: string;
+  search?: string;
+  limit?: number;
+  lastNoticeId?: string;
+  pinned?: boolean;
+}): Promise<{ notices: Notice[]; total: number; nextCursor?: string }> {
+  try {
+    console.log("Getting infinite notices with params:", params);
+
+    // Fallback to sample data if Firebase is not configured
+    if (!db) {
+      console.warn("⚠️ Firestore not configured, using sample data");
+      const { sampleNotices } = await import("@/lib/data/sample-notices");
+
+      let filteredNotices = [...sampleNotices];
+
+      // Apply filters
+      if (params?.category) {
+        filteredNotices = filteredNotices.filter(
+          notice => notice.category === params.category
+        );
+      }
+
+      if (params?.search) {
+        const searchTerm = params.search.toLowerCase();
+        filteredNotices = filteredNotices.filter(
+          notice =>
+            notice.title.toLowerCase().includes(searchTerm) ||
+            notice.description.toLowerCase().includes(searchTerm) ||
+            notice.content.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      if (params?.pinned !== undefined) {
+        filteredNotices = filteredNotices.filter(
+          notice => notice.isPinned === params.pinned
+        );
+      }
+
+      // Find the start index based on lastNoticeId
+      let startIndex = 0;
+      if (params?.lastNoticeId) {
+        const lastIndex = filteredNotices.findIndex(
+          notice => notice.id === params.lastNoticeId
+        );
+        startIndex = lastIndex >= 0 ? lastIndex + 1 : 0;
+      }
+
+      // Apply limit
+      const pageSize = params?.limit || 10;
+      const paginatedNotices = filteredNotices.slice(
+        startIndex,
+        startIndex + pageSize
+      );
+
+      // Determine next cursor
+      const nextCursor =
+        startIndex + pageSize < filteredNotices.length
+          ? paginatedNotices[paginatedNotices.length - 1]?.id
+          : undefined;
+
+      return {
+        notices: paginatedNotices,
+        total: filteredNotices.length,
+        nextCursor,
+      };
+    }
+
+    const noticesRef = collection(db, NOTICES_COLLECTION);
+    let noticeQuery = query(noticesRef, orderBy("createdAt", "desc"));
+
+    // Apply filters
+    if (params?.category) {
+      noticeQuery = query(
+        noticeQuery,
+        where("category", "==", params.category)
+      );
+    }
+
+    if (params?.pinned !== undefined) {
+      noticeQuery = query(noticeQuery, where("isPinned", "==", params.pinned));
+    }
+
+    // Apply cursor-based pagination
+    if (params?.lastNoticeId) {
+      const lastDoc = await getDoc(
+        doc(db, NOTICES_COLLECTION, params.lastNoticeId)
+      );
+      if (lastDoc.exists()) {
+        noticeQuery = query(noticeQuery, startAfter(lastDoc));
+      }
+    }
+
+    // Apply limit
+    const pageSize = params?.limit || 10;
+    noticeQuery = query(noticeQuery, limit(pageSize + 1)); // Get one extra to check for next page
+
+    const snapshot = await getDocs(noticeQuery);
+    let notices = snapshot.docs.map(docToNotice);
+
+    // Apply text search filter (client-side)
+    if (params?.search) {
+      const searchTerm = params.search.toLowerCase();
+      notices = notices.filter(
+        notice =>
+          notice.title.toLowerCase().includes(searchTerm) ||
+          notice.description.toLowerCase().includes(searchTerm) ||
+          notice.content.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Check if there are more pages
+    const hasNextPage = notices.length > pageSize;
+    if (hasNextPage) {
+      notices = notices.slice(0, pageSize); // Remove the extra item
+    }
+
+    // Set next cursor
+    const nextCursor = hasNextPage
+      ? notices[notices.length - 1]?.id
+      : undefined;
+
+    return {
+      notices,
+      total: notices.length,
+      nextCursor,
+    };
+  } catch (error) {
+    console.error("Error fetching infinite notices:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("從 Firestore 讀取公告失敗");
+  }
 }

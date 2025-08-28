@@ -30,6 +30,25 @@ export async function fetchNotices(params?: {
 }
 
 /**
+ * Fetch notices for infinite scrolling
+ */
+export async function fetchNoticesInfinite(params?: {
+  category?: string;
+  search?: string;
+  limit?: number;
+  lastNoticeId?: string;
+  pinned?: boolean;
+}): Promise<NoticesListResponse & { nextCursor?: string }> {
+  try {
+    const result = await noticeService.getNoticesInfinite(params);
+    return result;
+  } catch (error) {
+    console.error("Error fetching notices:", error);
+    throw new Error(error instanceof Error ? error.message : "讀取公告失敗");
+  }
+}
+
+/**
  * Fetch a specific notice by ID
  */
 export async function fetchNotice(id: string): Promise<NoticeResponse> {
