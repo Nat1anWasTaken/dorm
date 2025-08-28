@@ -35,12 +35,19 @@ export function useNotices(params?: {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof noticeApi.updateNotice>[1] }) =>
-      noticeApi.updateNotice(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Parameters<typeof noticeApi.updateNotice>[1];
+    }) => noticeApi.updateNotice(id, data),
     onSuccess: (_res, variables) => {
       void invalidateLists();
       // also update detail cache for this id
-      queryClient.invalidateQueries({ queryKey: noticesKeys.detail(variables.id) });
+      queryClient.invalidateQueries({
+        queryKey: noticesKeys.detail(variables.id),
+      });
     },
   });
 
@@ -53,7 +60,9 @@ export function useNotices(params?: {
     mutationFn: noticeApi.toggleNoticePin,
     onSuccess: (_res, notice) => {
       void invalidateLists();
-      queryClient.invalidateQueries({ queryKey: noticesKeys.detail(notice.id) });
+      queryClient.invalidateQueries({
+        queryKey: noticesKeys.detail(notice.id),
+      });
     },
   });
 
@@ -64,8 +73,10 @@ export function useNotices(params?: {
     error: (query.error as Error | null)?.message ?? null,
     refreshNotices: query.refetch,
     createNotice: createMutation.mutateAsync,
-    updateNotice: (id: string, data: Parameters<typeof noticeApi.updateNotice>[1]) =>
-      updateMutation.mutateAsync({ id, data }),
+    updateNotice: (
+      id: string,
+      data: Parameters<typeof noticeApi.updateNotice>[1]
+    ) => updateMutation.mutateAsync({ id, data }),
     deleteNotice: deleteMutation.mutateAsync,
     togglePin: togglePinMutation.mutateAsync,
   } as const;

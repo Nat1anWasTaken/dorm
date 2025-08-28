@@ -7,7 +7,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const id = params.id;
   try {
     const { notice } = await fetchNotice(id);
-    const desc = notice.description || (notice.content ?? "").replace(/[#*_`>\-]/g, "").slice(0, 120);
+    const desc =
+      notice.description ||
+      (notice.content ?? "").replace(/[#*_`>\-]/g, "").slice(0, 120);
 
     const images = notice.image ? [{ url: notice.image }] : undefined;
     return {
@@ -45,6 +47,10 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   }
 }
 
-export default function NoticeLayout({ children }: { children: React.ReactNode }) {
+export default function NoticeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }

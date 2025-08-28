@@ -30,7 +30,6 @@ export interface CreateNoticeRequest {
   isPinned?: boolean;
 }
 
-
 export interface NoticeResponse {
   notice: Notice;
   message?: string;

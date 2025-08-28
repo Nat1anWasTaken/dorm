@@ -67,7 +67,7 @@ export default function NoticeReadPage() {
         ) : !notice ? (
           <div className="text-gray-600">找不到公告。</div>
         ) : (
-          <article className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <article className="overflow-hidden rounded-lg bg-white shadow-sm">
             {notice.image ? (
               <div className="relative aspect-[16/6] bg-gray-100">
                 <Image
@@ -81,21 +81,21 @@ export default function NoticeReadPage() {
             ) : null}
 
             <div className="p-6 sm:p-8">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="mb-4 flex items-center gap-3">
                 <Badge className={categoryColor}>{categoryLabel}</Badge>
                 {notice.isPinned && (
                   <Badge className="bg-yellow-500 text-white">置頂</Badge>
                 )}
-                <span className="text-sm text-gray-500 ml-auto">
+                <span className="ml-auto text-sm text-gray-500">
                   {new Date(notice.createdAt).toLocaleDateString()}
                 </span>
               </div>
 
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="mb-2 text-3xl font-bold text-gray-900">
                 {notice.title}
               </h1>
               {notice.description && (
-                <p className="text-gray-700 mb-6">{notice.description}</p>
+                <p className="mb-6 text-gray-700">{notice.description}</p>
               )}
 
               <div className="prose prose-neutral max-w-none">

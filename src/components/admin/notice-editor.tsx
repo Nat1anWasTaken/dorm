@@ -12,21 +12,20 @@ interface NoticeEditorProps {
 }
 
 export function NoticeEditor({ content, onChange }: NoticeEditorProps) {
-
-  const handleEditorChange = useCallback((newEditorState: EditorState) => {
-    // Convert editor state to markdown and call onChange
-    newEditorState.read(() => {
-      const markdown = $convertToMarkdownString(TRANSFORMERS);
-      onChange(markdown);
-    });
-  }, [onChange]);
+  const handleEditorChange = useCallback(
+    (newEditorState: EditorState) => {
+      // Convert editor state to markdown and call onChange
+      newEditorState.read(() => {
+        const markdown = $convertToMarkdownString(TRANSFORMERS);
+        onChange(markdown);
+      });
+    },
+    [onChange]
+  );
 
   return (
     <div className="min-h-[300px]">
-      <Editor
-        initialMarkdown={content}
-        onChange={handleEditorChange}
-      />
+      <Editor initialMarkdown={content} onChange={handleEditorChange} />
     </div>
   );
 }

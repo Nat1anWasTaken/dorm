@@ -84,7 +84,7 @@ export default function AuthCallbackPage() {
   }
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-white grid place-items-center px-4">
+    <div className="grid min-h-[calc(100dvh-4rem)] place-items-center bg-white px-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
@@ -93,10 +93,10 @@ export default function AuthCallbackPage() {
               {loading
                 ? "正在驗證您的電子郵件連結。"
                 : needsEmail
-                ? "請輸入您的電子郵件以完成登入。"
-                : error
-                ? "完成連結時發生問題。"
-                : "完成"}
+                  ? "請輸入您的電子郵件以完成登入。"
+                  : error
+                    ? "完成連結時發生問題。"
+                    : "完成"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -108,12 +108,14 @@ export default function AuthCallbackPage() {
             {needsEmail && (
               <form onSubmit={handleComplete} className="space-y-3">
                 <div>
-                  <label className="mb-1 block text-sm font-medium">電子郵件</label>
+                  <label className="mb-1 block text-sm font-medium">
+                    電子郵件
+                  </label>
                   <Input
                     type="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={e => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     autoComplete="email"
                     disabled={loading}
@@ -125,7 +127,7 @@ export default function AuthCallbackPage() {
               </form>
             )}
             {!needsEmail && (
-              <div className="text-sm text-muted-foreground">
+              <div className="text-muted-foreground text-sm">
                 {loading ? "請稍候…" : "您可以關閉此分頁。"}
               </div>
             )}

@@ -26,15 +26,16 @@ export function useAdminClaims() {
     }
 
     // Get the ID token to access custom claims
-    user.getIdTokenResult()
-      .then((idTokenResult) => {
+    user
+      .getIdTokenResult()
+      .then(idTokenResult => {
         const customClaims = idTokenResult.claims as AdminClaims;
         setClaims({
           admin: customClaims.admin || false,
-          roles: customClaims.roles || []
+          roles: customClaims.roles || [],
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error getting custom claims:", error);
         setClaims({});
       })

@@ -20,7 +20,7 @@ export default function LoginPage() {
     search?.get("continueUrl") || search?.get("continue") || "/";
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-white grid place-items-center px-4">
+    <div className="grid min-h-[calc(100dvh-4rem)] place-items-center bg-white px-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
@@ -45,19 +45,19 @@ export default function LoginPage() {
               </TabsContent>
             </Tabs>
 
-              <div className="mt-6 text-center text-sm text-muted-foreground">
-                <div>
-                  還沒有帳號？{" "}
-                  <Link href="/register" className="underline underline-offset-4">
-                    註冊
-                  </Link>
-                </div>
-                <div className="mt-2">
-                  <Link href="/" className="underline underline-offset-4">
-                    回到首頁
-                  </Link>
-                </div>
+            <div className="text-muted-foreground mt-6 text-center text-sm">
+              <div>
+                還沒有帳號？{" "}
+                <Link href="/register" className="underline underline-offset-4">
+                  註冊
+                </Link>
               </div>
+              <div className="mt-2">
+                <Link href="/" className="underline underline-offset-4">
+                  回到首頁
+                </Link>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

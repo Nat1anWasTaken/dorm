@@ -127,15 +127,15 @@ export function NoticeForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      className="grid grid-cols-1 gap-8 lg:grid-cols-3"
     >
-      <div className="lg:col-span-2 space-y-6">
+      <div className="space-y-6 lg:col-span-2">
         <div className="space-y-2">
           <Label htmlFor="title">標題</Label>
           <Input
             id="title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             placeholder="例如：21 日停水維護"
           />
         </div>
@@ -145,18 +145,18 @@ export function NoticeForm({
           <Textarea
             id="description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={e => setDescription(e.target.value)}
             rows={3}
             placeholder="一到兩句簡短說明"
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="category">類別</Label>
             <Select
               value={category}
-              onValueChange={(val) => setCategory(val as Notice["category"])}
+              onValueChange={val => setCategory(val as Notice["category"])}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="請選擇類別" />
@@ -175,11 +175,9 @@ export function NoticeForm({
                 id="pinned"
                 type="checkbox"
                 checked={isPinned}
-                onChange={(e) => setIsPinned(e.target.checked)}
+                onChange={e => setIsPinned(e.target.checked)}
               />
-              <span className="text-sm text-gray-600">
-                顯示在公告欄頂端
-              </span>
+              <span className="text-sm text-gray-600">顯示在公告欄頂端</span>
             </div>
           </div>
         </div>
@@ -191,7 +189,7 @@ export function NoticeForm({
               type="url"
               placeholder="圖片網址"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              onChange={e => setImageUrl(e.target.value)}
             />
             {imagePreview && (
               <Button
@@ -231,7 +229,7 @@ export function NoticeForm({
       <div className="lg:col-span-1">
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-500 mb-2">即時預覽</div>
+            <div className="mb-2 text-sm text-gray-500">即時預覽</div>
             <NoticeCard notice={previewNotice} showAdminControls={false} />
           </CardContent>
         </Card>

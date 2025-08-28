@@ -2,18 +2,18 @@
  * Firestore service for notice operations
  */
 
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  getDoc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import { db } from "./client";
 import { type Notice } from "@/types/notice";
@@ -23,7 +23,10 @@ const NOTICES_COLLECTION = "notices";
 /**
  * Convert Firestore document to Notice type
  */
-function docToNotice(doc: { id: string; data: () => Record<string, unknown> }): Notice {
+function docToNotice(doc: {
+  id: string;
+  data: () => Record<string, unknown>;
+}): Notice {
   const data = doc.data();
   return {
     id: doc.id,
@@ -50,53 +53,64 @@ export async function getNotices(params?: {
   try {
     console.log("Getting notices with params:", params);
     console.log("DB instance:", db ? "✅ Available" : "❌ Missing");
-    
+
     // Fallback to sample data if Firebase is not configured
     if (!db) {
       console.warn("⚠️ Firestore not configured, using sample data");
       const { sampleNotices } = await import("@/lib/data/sample-notices");
-      
+
       let filteredNotices = [...sampleNotices];
-      
+
       // Apply filters (similar to client-side filtering)
       if (params?.category) {
-        filteredNotices = filteredNotices.filter(notice => notice.category === params.category);
-      }
-      
-      if (params?.search) {
-        const searchTerm = params.search.toLowerCase();
-        filteredNotices = filteredNotices.filter(notice =>
-          notice.title.toLowerCase().includes(searchTerm) ||
-          notice.description.toLowerCase().includes(searchTerm) ||
-          notice.content.toLowerCase().includes(searchTerm)
+        filteredNotices = filteredNotices.filter(
+          notice => notice.category === params.category
         );
       }
-      
-      if (params?.pinned !== undefined) {
-        filteredNotices = filteredNotices.filter(notice => notice.isPinned === params.pinned);
+
+      if (params?.search) {
+        const searchTerm = params.search.toLowerCase();
+        filteredNotices = filteredNotices.filter(
+          notice =>
+            notice.title.toLowerCase().includes(searchTerm) ||
+            notice.description.toLowerCase().includes(searchTerm) ||
+            notice.content.toLowerCase().includes(searchTerm)
+        );
       }
-      
+
+      if (params?.pinned !== undefined) {
+        filteredNotices = filteredNotices.filter(
+          notice => notice.isPinned === params.pinned
+        );
+      }
+
       // Apply offset and limit
       const offset = params?.offset || 0;
       const limit = params?.limit || 20;
       const paginatedNotices = filteredNotices.slice(offset, offset + limit);
-      
+
       return {
         notices: paginatedNotices,
-        total: filteredNotices.length
+        total: filteredNotices.length,
       };
     }
-    
+
     if (!db) {
       throw new Error("Firebase 未初始化");
     }
     const noticesRef = collection(db, NOTICES_COLLECTION);
-    console.log("Collection reference created:", noticesRef ? "✅ Success" : "❌ Failed");
+    console.log(
+      "Collection reference created:",
+      noticesRef ? "✅ Success" : "❌ Failed"
+    );
     let noticeQuery = query(noticesRef, orderBy("createdAt", "desc"));
 
     // Apply filters
     if (params?.category) {
-      noticeQuery = query(noticeQuery, where("category", "==", params.category));
+      noticeQuery = query(
+        noticeQuery,
+        where("category", "==", params.category)
+      );
     }
 
     if (params?.pinned !== undefined) {
@@ -114,10 +128,11 @@ export async function getNotices(params?: {
     // Apply text search filter (client-side since Firestore doesn't have full-text search)
     if (params?.search) {
       const searchTerm = params.search.toLowerCase();
-      notices = notices.filter(notice =>
-        notice.title.toLowerCase().includes(searchTerm) ||
-        notice.description.toLowerCase().includes(searchTerm) ||
-        notice.content.toLowerCase().includes(searchTerm)
+      notices = notices.filter(
+        notice =>
+          notice.title.toLowerCase().includes(searchTerm) ||
+          notice.description.toLowerCase().includes(searchTerm) ||
+          notice.content.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -128,7 +143,7 @@ export async function getNotices(params?: {
 
     return {
       notices,
-      total: notices.length
+      total: notices.length,
     };
   } catch (error) {
     console.error("Error fetching notices:", error);
@@ -165,7 +180,9 @@ export async function getNoticeById(id: string): Promise<Notice | null> {
 /**
  * Create a new notice
  */
-export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Notice> {
+export async function createNotice(
+  noticeData: Omit<Notice, "id">
+): Promise<Notice> {
   try {
     if (!db) {
       throw new Error("Firebase 未初始化");
@@ -184,7 +201,10 @@ export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Noti
       Object.entries(basePayload).filter(([, v]) => v !== undefined)
     );
 
-    const docRef = await addDoc(collection(db, NOTICES_COLLECTION), cleanPayload);
+    const docRef = await addDoc(
+      collection(db, NOTICES_COLLECTION),
+      cleanPayload
+    );
 
     const newNotice: Notice = {
       id: docRef.id,
@@ -201,13 +221,16 @@ export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Noti
 /**
  * Update an existing notice
  */
-export async function updateNotice(id: string, updates: Partial<Omit<Notice, "id">>): Promise<void> {
+export async function updateNotice(
+  id: string,
+  updates: Partial<Omit<Notice, "id">>
+): Promise<void> {
   try {
     if (!db) {
       throw new Error("Firebase 未初始化");
     }
     const docRef = doc(db, NOTICES_COLLECTION, id);
-    
+
     // Remove undefined values
     const cleanUpdates = Object.fromEntries(
       Object.entries(updates).filter(([, value]) => value !== undefined)

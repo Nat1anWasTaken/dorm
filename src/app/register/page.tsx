@@ -20,7 +20,7 @@ export default function RegisterPage() {
     search?.get("continueUrl") || search?.get("continue") || "/";
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-white grid place-items-center px-4">
+    <div className="grid min-h-[calc(100dvh-4rem)] place-items-center bg-white px-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
@@ -43,13 +43,13 @@ export default function RegisterPage() {
               </TabsContent>
             </Tabs>
 
-            <div className="mt-6 text-center text-sm text-muted-foreground">
+            <div className="text-muted-foreground mt-6 text-center text-sm">
               已經有帳號了嗎？{" "}
               <Link href="/login" className="underline underline-offset-4">
                 登入
               </Link>
             </div>
-            <div className="mt-2 text-center text-sm text-muted-foreground">
+            <div className="text-muted-foreground mt-2 text-center text-sm">
               <Link href="/" className="underline underline-offset-4">
                 回到首頁
               </Link>

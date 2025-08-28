@@ -21,7 +21,7 @@ export async function getCurrentUserClaims(): Promise<UserClaims | null> {
     const idTokenResult = await currentUser.getIdTokenResult();
     return {
       admin: (idTokenResult.claims.admin as boolean) || false,
-      roles: (idTokenResult.claims.roles as string[]) || []
+      roles: (idTokenResult.claims.roles as string[]) || [],
     };
   } catch (error) {
     console.error("Error getting user claims:", error);
@@ -32,7 +32,9 @@ export async function getCurrentUserClaims(): Promise<UserClaims | null> {
 /**
  * Get authorization header with ID token
  */
-export async function getAuthHeader(): Promise<{ Authorization: string } | Record<string, never>> {
+export async function getAuthHeader(): Promise<
+  { Authorization: string } | Record<string, never>
+> {
   const currentUser = auth.currentUser;
   if (!currentUser) return {};
 

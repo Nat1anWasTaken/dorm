@@ -27,11 +27,7 @@ function MarkdownImport({ markdown }: { markdown: string }) {
   return null;
 }
 
-export function NoticeMarkdownRenderer({
-  markdown,
-}: {
-  markdown: string;
-}) {
+export function NoticeMarkdownRenderer({ markdown }: { markdown: string }) {
   const editorConfig: InitialConfigType = {
     namespace: "NoticeRenderer",
     theme: editorTheme,

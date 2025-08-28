@@ -51,8 +51,8 @@ export function NoticeCard({
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
-      <div className="aspect-[4/3] relative bg-gray-100">
+    <Card className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+      <div className="relative aspect-[4/3] bg-gray-100">
         {notice.image ? (
           <Image
             src={notice.image}
@@ -61,8 +61,8 @@ export function NoticeCard({
             className="object-cover"
           />
         ) : (
-          <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-100 to-gray-200">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg flex items-center justify-center">
+          <div className="flex h-full items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+            <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-300">
               <span className="text-2xl text-gray-500">📋</span>
             </div>
           </div>
@@ -73,14 +73,14 @@ export function NoticeCard({
           </Badge>
         )}
         {isAdmin && showAdminControls && (
-          <div className="absolute top-3 left-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-3 left-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   size="sm"
                   variant="secondary"
-                  className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                  onClick={(e) => {
+                  className="h-8 w-8 bg-white/90 p-0 hover:bg-white"
+                  onClick={e => {
                     e.stopPropagation();
                     onEdit?.(notice);
                   }}
@@ -96,8 +96,8 @@ export function NoticeCard({
                 <Button
                   size="sm"
                   variant="secondary"
-                  className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                  onClick={(e) => {
+                  className="h-8 w-8 bg-white/90 p-0 hover:bg-white"
+                  onClick={e => {
                     e.stopPropagation();
                     onTogglePin?.(notice);
                   }}
@@ -120,7 +120,7 @@ export function NoticeCard({
                   size="sm"
                   variant="destructive"
                   className="h-8 w-8 p-0"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
                     setShowDeleteDialog(true);
                   }}
@@ -134,15 +134,15 @@ export function NoticeCard({
         )}
       </div>
       <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <Badge className={getCategoryColor(notice.category)}>
             {getCategoryLabel(notice.category)}
           </Badge>
         </div>
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+        <h3 className="mb-2 line-clamp-2 text-lg font-semibold">
           {notice.title}
         </h3>
-        <p className="text-sm text-gray-600 line-clamp-3">
+        <p className="line-clamp-3 text-sm text-gray-600">
           {notice.description}
         </p>
       </CardContent>

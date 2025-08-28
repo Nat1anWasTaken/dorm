@@ -19,7 +19,10 @@ export type MagicLinkFormProps = {
   className?: string;
 };
 
-export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormProps) {
+export function MagicLinkForm({
+  continueUrl = "/",
+  className,
+}: MagicLinkFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -46,7 +49,8 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
     setError(null);
     setLoading(true);
     try {
-      const stored = window.localStorage.getItem(EMAIL_FOR_SIGN_IN_KEY) || email;
+      const stored =
+        window.localStorage.getItem(EMAIL_FOR_SIGN_IN_KEY) || email;
       if (!stored) {
         setMessage(null);
         setError("請輸入電子郵件以完成登入。");
@@ -109,7 +113,10 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
   }
 
   return (
-    <form onSubmit={handleSendEmailLink} className={className ? className : "space-y-3"}>
+    <form
+      onSubmit={handleSendEmailLink}
+      className={className ? className : "space-y-3"}
+    >
       {message && (
         <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
           {message}
@@ -126,7 +133,7 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
           type="email"
           required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           placeholder="you@example.com"
           autoComplete="email"
           disabled={loading}
@@ -147,7 +154,7 @@ export function MagicLinkForm({ continueUrl = "/", className }: MagicLinkFormPro
           </Button>
         )}
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         我們會寄送一組安全連結給您。點擊後即可在此完成登入。
       </p>
     </form>

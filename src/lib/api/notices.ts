@@ -2,11 +2,11 @@
  * Client functions for notice management using Firebase directly
  */
 
-import { 
-  type Notice, 
-  type CreateNoticeRequest, 
+import {
+  type Notice,
+  type CreateNoticeRequest,
   type NoticeResponse,
-  type NoticesListResponse 
+  type NoticesListResponse,
 } from "@/types/notice";
 import * as noticeService from "@/lib/firebase/notices";
 
@@ -44,31 +44,31 @@ export async function fetchNotice(id: string): Promise<NoticeResponse> {
     // Fallback to sample data when Firestore isn't available (local dev)
     try {
       const { sampleNotices } = await import("@/lib/data/sample-notices");
-      const fallback = sampleNotices.find((n) => n.id === id);
+      const fallback = sampleNotices.find(n => n.id === id);
       if (fallback) {
         return { notice: fallback };
       }
     } catch {}
-    throw new Error(
-      error instanceof Error ? error.message : "讀取公告失敗"
-    );
+    throw new Error(error instanceof Error ? error.message : "讀取公告失敗");
   }
 }
 
 /**
  * Create a new notice (handled by Firebase Security Rules)
  */
-export async function createNotice(data: CreateNoticeRequest): Promise<NoticeResponse> {
+export async function createNotice(
+  data: CreateNoticeRequest
+): Promise<NoticeResponse> {
   try {
     const noticeData = {
       ...data,
       createdAt: new Date().toISOString().split("T")[0], // Format as YYYY-MM-DD
     };
-    
+
     const notice = await noticeService.createNotice(noticeData);
-    return { 
+    return {
       notice,
-      message: "已成功建立公告" 
+      message: "已成功建立公告",
     };
   } catch (error) {
     console.error("Error creating notice:", error);
@@ -79,18 +79,21 @@ export async function createNotice(data: CreateNoticeRequest): Promise<NoticeRes
 /**
  * Update a notice (handled by Firebase Security Rules)
  */
-export async function updateNotice(id: string, data: Partial<CreateNoticeRequest>): Promise<NoticeResponse> {
+export async function updateNotice(
+  id: string,
+  data: Partial<CreateNoticeRequest>
+): Promise<NoticeResponse> {
   try {
     await noticeService.updateNotice(id, data);
     const notice = await noticeService.getNoticeById(id);
-    
+
     if (!notice) {
       throw new Error("更新後找不到公告");
     }
-    
-    return { 
+
+    return {
       notice,
-      message: "已成功更新公告" 
+      message: "已成功更新公告",
     };
   } catch (error) {
     console.error("Error updating notice:", error);

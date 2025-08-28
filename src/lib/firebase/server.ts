@@ -13,10 +13,10 @@ const firebaseConfig = {
 };
 
 // Debug: Log configuration status (remove in production)
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   console.log("Firebase server config:", {
     apiKey: firebaseConfig.apiKey ? "✅ Set" : "❌ Missing",
-    authDomain: firebaseConfig.authDomain ? "✅ Set" : "❌ Missing", 
+    authDomain: firebaseConfig.authDomain ? "✅ Set" : "❌ Missing",
     projectId: firebaseConfig.projectId ? "✅ Set" : "❌ Missing",
     appId: firebaseConfig.appId ? "✅ Set" : "❌ Missing",
   });
@@ -29,13 +29,15 @@ function createFirebaseApp(): FirebaseApp | null {
     if (existingApps.length > 0) {
       return existingApps[0];
     }
-    
+
     // Validate required environment variables
     if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-      console.warn("⚠️ Firebase configuration missing. Some environment variables are not set.");
+      console.warn(
+        "⚠️ Firebase configuration missing. Some environment variables are not set."
+      );
       return null;
     }
-    
+
     return initializeApp(firebaseConfig, "server");
   } catch (error) {
     console.error("❌ Failed to initialize Firebase:", error);

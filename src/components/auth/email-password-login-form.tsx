@@ -13,7 +13,10 @@ export type EmailPasswordLoginFormProps = {
   className?: string;
 };
 
-export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPasswordLoginFormProps) {
+export function EmailPasswordLoginForm({
+  continueUrl = "/",
+  className,
+}: EmailPasswordLoginFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +39,10 @@ export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPa
   }
 
   return (
-    <form onSubmit={handlePasswordSignIn} className={className ? className : "space-y-3"}>
+    <form
+      onSubmit={handlePasswordSignIn}
+      className={className ? className : "space-y-3"}
+    >
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
           {error}
@@ -48,7 +54,7 @@ export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPa
           type="email"
           required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           placeholder="you@example.com"
           autoComplete="email"
           disabled={loading}
@@ -60,7 +66,7 @@ export function EmailPasswordLoginForm({ continueUrl = "/", className }: EmailPa
           type="password"
           required
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           placeholder="••••••••"
           autoComplete="current-password"
           disabled={loading}

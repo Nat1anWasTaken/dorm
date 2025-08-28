@@ -25,4 +25,3 @@ export function useNotice(id?: string) {
     refetch: query.refetch,
   } as const;
 }
-

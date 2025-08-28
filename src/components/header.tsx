@@ -39,12 +39,12 @@ export function Header() {
             </Link>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-8 flex-1 justify-end mr-8">
-            {navigation.map((item) => (
+          <nav className="mr-8 hidden flex-1 items-center justify-end space-x-8 md:flex">
+            {navigation.map(item => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900"
               >
                 {item.name}
               </Link>

@@ -55,19 +55,17 @@ export function NoticeBoard() {
     }
   };
 
-  const pinnedNotices = notices.filter((notice) => notice.isPinned);
+  const pinnedNotices = notices.filter(notice => notice.isPinned);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Container className="py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col gap-8 lg:flex-row">
           {/* Main Notice Board */}
           <div className="flex-1">
             <div className="mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold text-gray-900">
-                  公告欄
-                </h1>
+              <div className="mb-6 flex items-center justify-between">
+                <h1 className="text-3xl font-bold text-gray-900">公告欄</h1>
                 {isAdmin && (
                   <Button onClick={() => router.push("/notices/new")}>
                     建立公告
@@ -89,47 +87,47 @@ export function NoticeBoard() {
               </Tabs>
 
               <div className="relative mb-6">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                 <Input
                   placeholder="搜尋公告"
-                  className="pl-10 bg-white"
+                  className="bg-white pl-10"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                 />
               </div>
             </div>
 
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <h2 className="mb-4 text-xl font-semibold text-gray-900">
                 最新公告
               </h2>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+                <div className="mb-6 rounded-md border border-red-200 bg-red-50 p-4">
                   <p className="text-red-600">{error}</p>
                 </div>
               )}
 
               {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
                   {[...Array(4)].map((_, i) => (
                     <div
                       key={i}
-                      className="bg-white rounded-lg shadow-md p-4 animate-pulse"
+                      className="animate-pulse rounded-lg bg-white p-4 shadow-md"
                     >
-                      <div className="aspect-[4/3] bg-gray-200 rounded mb-4"></div>
+                      <div className="mb-4 aspect-[4/3] rounded bg-gray-200"></div>
                       <div className="space-y-2">
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-3 bg-gray-200 rounded w-full"></div>
-                        <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                        <div className="h-4 w-3/4 rounded bg-gray-200"></div>
+                        <div className="h-3 w-full rounded bg-gray-200"></div>
+                        <div className="h-3 w-2/3 rounded bg-gray-200"></div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {notices.length > 0 ? (
-                    notices.map((notice) => (
+                    notices.map(notice => (
                       <NoticeCard
                         key={notice.id}
                         notice={notice}
@@ -139,7 +137,7 @@ export function NoticeBoard() {
                       />
                     ))
                   ) : (
-                    <div className="col-span-full text-center py-8 text-gray-500">
+                    <div className="col-span-full py-8 text-center text-gray-500">
                       找不到任何公告。
                     </div>
                   )}
@@ -148,11 +146,11 @@ export function NoticeBoard() {
             </div>
 
             {/* Pagination Placeholder */}
-            <div className="flex justify-center items-center space-x-2">
+            <div className="flex items-center justify-center space-x-2">
               <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
                 ‹
               </button>
-              <button className="px-3 py-2 text-sm bg-blue-600 text-white rounded">
+              <button className="rounded bg-blue-600 px-3 py-2 text-sm text-white">
                 1
               </button>
               <button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">

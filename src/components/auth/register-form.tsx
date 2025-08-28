@@ -17,7 +17,10 @@ export type RegisterFormProps = {
   className?: string;
 };
 
-export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps) {
+export function RegisterForm({
+  continueUrl = "/",
+  className,
+}: RegisterFormProps) {
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -56,7 +59,10 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
   }
 
   return (
-    <form onSubmit={handleRegister} className={className ? className : "space-y-3"}>
+    <form
+      onSubmit={handleRegister}
+      className={className ? className : "space-y-3"}
+    >
       {message && (
         <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
           {message}
@@ -72,7 +78,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
         <Input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={e => setName(e.target.value)}
           placeholder="王小明"
           disabled={loading}
         />
@@ -83,7 +89,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
           type="email"
           required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           placeholder="you@example.com"
           autoComplete="email"
           disabled={loading}
@@ -95,7 +101,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
           type="password"
           required
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           placeholder="••••••••"
           autoComplete="new-password"
           disabled={loading}
@@ -107,7 +113,7 @@ export function RegisterForm({ continueUrl = "/", className }: RegisterFormProps
           type="password"
           required
           value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
+          onChange={e => setConfirm(e.target.value)}
           placeholder="••••••••"
           autoComplete="new-password"
           disabled={loading}

@@ -11,7 +11,7 @@ export default function NewNoticePage() {
       <Container className="py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">建立公告</h1>
-          <p className="text-gray-600 mt-1">新增公告、活動或維護通知。</p>
+          <p className="mt-1 text-gray-600">新增公告、活動或維護通知。</p>
         </div>
         {loading ? (
           <div className="text-gray-600">檢查權限中…</div>

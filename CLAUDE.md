@@ -5,11 +5,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 **Package Manager:**
+
 - This project uses pnpm exclusively. Always use `pnpm` instead of npm or yarn.
 
 **Development:**
+
 - `pnpm dev` - Start development server (uses Turbopack)
-- `pnpm build` - Build for production (uses Turbopack) 
+- `pnpm build` - Build for production (uses Turbopack)
 - `pnpm start` - Start production server
 - `pnpm lint` - Run ESLint
 
@@ -18,30 +20,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Next.js 15 application using the App Router with TypeScript and Tailwind CSS.
 
 **Project Structure:**
+
 - `src/app/` - Next.js App Router pages and layouts
 - `src/lib/` - Utility functions and shared logic
 - Uses `@/` alias for imports pointing to `src/`
 
 **UI Framework:**
+
 - Configured for shadcn/ui components with "new-york" style
 - Uses Lucide React for icons
 - Tailwind CSS with CSS variables enabled
 - Class composition utility function `cn()` in `src/lib/utils.ts:4`
 
 **Dependencies:**
+
 - Next.js 15 with React 19
 - TypeScript with strict mode
-- Tailwind CSS v4 
+- Tailwind CSS v4
 - Utility libraries: clsx, class-variance-authority, tailwind-merge
 - Font: Geist (automatically optimized via next/font)
 
 **shadcn/ui Configuration:**
+
 - Components go in `@/components`
-- UI components in `@/components/ui`  
+- UI components in `@/components/ui`
 - Hooks in `@/hooks`
 - Global CSS in `src/app/globals.css`
 
 **Component Creation Guidelines:**
+
 - ALWAYS check if a component already exists before creating new ones
 - Check `@/components/ui/` for existing shadcn/ui components
 - If a shadcn/ui component doesn't exist, use the CLI: `pnpm dlx shadcn@latest add <component-name>`
@@ -84,7 +91,8 @@ export function useFoos(params?: { search?: string }) {
   });
 
   const updateFoo = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => api.updateFoo(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      api.updateFoo(id, data),
     onSuccess: (_res, { id }) => {
       qc.invalidateQueries({ queryKey: fooKeys.all });
       qc.invalidateQueries({ queryKey: fooKeys.detail(id) });
@@ -117,6 +125,7 @@ export function useFoo(id?: string) {
 ## Documentation Research
 
 **Context7 Integration:**
+
 - Always use context7 MCP tools when searching for library documentation
 - Use `resolve-library-id` first to find the correct library ID
 - Then use `get-library-docs` to retrieve up-to-date documentation

@@ -9,7 +9,7 @@ export function useCurrentUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
+    const unsub = onAuthStateChanged(auth, u => {
       setUser(u);
       setLoading(false);
     });
@@ -18,4 +18,3 @@ export function useCurrentUser() {
 
   return { user, loading } as const;
 }
-

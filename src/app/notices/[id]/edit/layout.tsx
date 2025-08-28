@@ -13,7 +13,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function EditNoticeLayout({ children }: { children: React.ReactNode }) {
+export default function EditNoticeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }
-
