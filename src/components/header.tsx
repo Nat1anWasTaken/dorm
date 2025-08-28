@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import {
@@ -11,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAdminClaims } from "@/hooks/use-admin";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { auth } from "@/lib/firebase/client";
 import { signOut } from "firebase/auth";
@@ -24,6 +26,7 @@ const navigation = [
 
 export function Header() {
   const { user } = useCurrentUser();
+  const { isAdmin } = useAdminClaims();
   const letter = useMemo(() => {
     const src = user?.displayName || user?.email || "?";
     return src.trim().charAt(0).toUpperCase();
@@ -69,8 +72,11 @@ export function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-48">
                   {(user.displayName || user.email) && (
-                    <DropdownMenuLabel className="truncate">
-                      {user.displayName || user.email}
+                    <DropdownMenuLabel className="flex items-center gap-2">
+                      <span className="truncate">
+                        {user.displayName || user.email}
+                      </span>
+                      {isAdmin && <Badge variant="destructive">Admin</Badge>}
                     </DropdownMenuLabel>
                   )}
                   <DropdownMenuSeparator />
