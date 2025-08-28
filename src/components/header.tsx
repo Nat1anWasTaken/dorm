@@ -35,7 +35,7 @@ export function Header() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <div className="h-8 w-8 rounded bg-black"></div>
-              <span className="text-xl font-bold">DormConnect</span>
+              <span className="text-xl font-bold">北科東校區宿委會</span>
             </Link>
           </div>
 

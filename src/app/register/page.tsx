@@ -25,7 +25,7 @@ export default function RegisterPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">建立你的帳號</CardTitle>
-            <CardDescription>一分鐘內加入 DormConnect。</CardDescription>
+            <CardDescription>一分鐘內加入 北科東校區宿委會。</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="register">
