@@ -19,10 +19,7 @@ import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useMemo } from "react";
 
-const navigation = [
-  { name: "首頁", href: "/" },
-  { name: "委員會", href: "/committee" },
-];
+const navigation = [{ name: "首頁", href: "/" }];
 
 export function Header() {
   const { user } = useCurrentUser();
