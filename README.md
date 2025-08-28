@@ -82,6 +82,28 @@
 
 > 非管理員帳戶目前沒有任何功能
 
+### Firebase 自訂密碼重設頁面設定
+
+本專案包含自訂的密碼重設頁面：
+
+1. **進入 Firebase 主控台**
+   - 前往 https://console.firebase.google.com
+   - 選擇您的專案
+
+2. **開啟驗證設定**
+   - 點擊左側選單的「Authentication」
+   - 切換到「Templates」分頁
+
+3. **設定密碼重設範本**
+   - 找到「Password reset」範本
+   - 點擊編輯（鉛筆）圖示
+   - 在「Action URL」欄位輸入：`https://yourdomain.com/login/reset-password`
+     - 將 `yourdomain.com` 替換為您的實際網域
+     - 本地開發時使用：`http://localhost:3000/login/reset-password`
+
+4. **儲存變更**
+   - 點擊「Save」套用設定
+
 ## License
 
 本專案之授權條款請見 `LICENSE` 檔案。軟體以「現狀」提供且不附帶任何明示或暗示之擔保；使用者須自行承擔風險與責任。

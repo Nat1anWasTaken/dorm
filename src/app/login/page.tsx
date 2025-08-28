@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import EmailPasswordLoginForm from "@/components/auth/email-password-login-form";
@@ -19,6 +19,7 @@ function LoginContent() {
   const search = useSearchParams();
   const continueUrl =
     search?.get("continueUrl") || search?.get("continue") || "/";
+  const [activeTab, setActiveTab] = useState("password");
 
   return (
     <div className="grid min-h-[calc(100dvh-4rem)] place-items-center bg-white px-4">
@@ -31,7 +32,7 @@ function LoginContent() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="password">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-4 w-full">
                 <TabsTrigger value="password">電子郵件與密碼</TabsTrigger>
                 <TabsTrigger value="link">電子郵件連結</TabsTrigger>

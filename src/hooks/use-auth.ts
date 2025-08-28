@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
+import { useMutation } from "@tanstack/react-query";
+import {
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  type User,
+} from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 
 export function useCurrentUser() {
@@ -17,4 +22,21 @@ export function useCurrentUser() {
   }, []);
 
   return { user, loading } as const;
+}
+
+export function useForgotPassword() {
+  const mutation = useMutation({
+    mutationFn: async (email: string) => {
+      await sendPasswordResetEmail(auth, email);
+      return { success: true };
+    },
+  });
+
+  return {
+    sendResetEmail: mutation.mutateAsync,
+    loading: mutation.isPending,
+    error: mutation.error?.message ?? null,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  } as const;
 }

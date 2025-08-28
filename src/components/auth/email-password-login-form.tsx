@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,6 +76,14 @@ export function EmailPasswordLoginForm({
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? "登入中…" : "登入"}
       </Button>
+      <div className="text-center">
+        <Link
+          href="/login/forgot-password"
+          className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4"
+        >
+          忘記密碼？
+        </Link>
+      </div>
     </form>
   );
 }
