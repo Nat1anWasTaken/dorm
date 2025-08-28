@@ -12,7 +12,6 @@ import { useAdminClaims } from "@/hooks/use-admin";
 import { type Notice, type NoticeCardProps } from "@/types/notice";
 import { Edit, Pin, PinOff, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { toast } from "sonner";
 import { useState } from "react";
 import DeleteNoticeDialog from "@/components/notices/delete-notice-dialog";
 

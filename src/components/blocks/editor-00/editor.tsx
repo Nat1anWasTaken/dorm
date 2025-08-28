@@ -2,7 +2,7 @@
 
 import { InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer"
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin"
-import { EditorState, SerializedEditorState } from "lexical"
+import { EditorState, LexicalEditor, SerializedEditorState } from "lexical"
 import { useMemo, useRef } from "react"
 import { $convertFromMarkdownString, TRANSFORMERS } from "@lexical/markdown"
 
@@ -37,32 +37,42 @@ export function Editor({
   const initialMarkdownRef = useRef(initialMarkdown)
   const initialSerializedRef = useRef(editorSerializedState)
   const initialConfig = useMemo<InitialConfigType>(() => {
-    // Build a stable initialConfig that doesn't change on every render
-    const cfg: InitialConfigType = { ...editorConfig }
+    const baseConfig: Omit<InitialConfigType, "editorState"> = {
+      namespace: editorConfig.namespace,
+      theme: editorConfig.theme,
+      nodes: editorConfig.nodes,
+      onError: editorConfig.onError,
+      editable: editorConfig.editable,
+    }
 
     if (editorState) {
-      cfg.editorState = editorState
-      return cfg
+      return { ...baseConfig, editorState }
     }
 
     const initialSerialized = initialSerializedRef.current
     if (initialSerialized) {
-      cfg.editorState = (editor) => {
-        const parsed = editor.parseEditorState(
-          JSON.stringify(initialSerialized)
-        )
-        editor.setEditorState(parsed)
+      return {
+        ...baseConfig,
+        editorState: (editor: LexicalEditor) => {
+          const parsed = editor.parseEditorState(
+            JSON.stringify(initialSerialized)
+          )
+          editor.setEditorState(parsed)
+        },
       }
-      return cfg
     }
 
     const md = initialMarkdownRef.current
     if (md && md.trim()) {
-      cfg.editorState = () => {
-        $convertFromMarkdownString(md, TRANSFORMERS)
+      return {
+        ...baseConfig,
+        editorState: () => {
+          $convertFromMarkdownString(md, TRANSFORMERS)
+        },
       }
     }
-    return cfg
+
+    return baseConfig as InitialConfigType
   }, [editorState])
 
   return (

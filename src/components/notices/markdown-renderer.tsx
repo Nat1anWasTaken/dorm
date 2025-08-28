@@ -29,12 +29,8 @@ function MarkdownImport({ markdown }: { markdown: string }) {
 
 export function NoticeMarkdownRenderer({
   markdown,
-  className,
-  minHeight = false,
 }: {
   markdown: string;
-  className?: string;
-  minHeight?: boolean;
 }) {
   const editorConfig: InitialConfigType = {
     namespace: "NoticeRenderer",

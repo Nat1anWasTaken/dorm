@@ -30,9 +30,6 @@ export interface CreateNoticeRequest {
   isPinned?: boolean;
 }
 
-export interface UpdateNoticeRequest extends Partial<CreateNoticeRequest> {
-  id: string;
-}
 
 export interface NoticeResponse {
   notice: Notice;

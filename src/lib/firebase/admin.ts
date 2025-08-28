@@ -4,7 +4,10 @@
  */
 
 import { auth } from "./client";
-import { UserClaims } from "@/lib/permissions";
+export interface UserClaims {
+  admin?: boolean;
+  roles?: string[];
+}
 
 /**
  * Verify Firebase ID token and return user claims

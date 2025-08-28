@@ -1,7 +1,6 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { type Notice } from "@/types/notice";
 import * as noticeApi from "@/lib/api/notices";
 
 export const noticesKeys = {
