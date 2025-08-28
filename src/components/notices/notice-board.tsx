@@ -9,10 +9,15 @@ import { NoticeCard } from "./notice-card";
 import { PinnedNotices } from "./pinned-notices";
 import { type Notice } from "@/types/notice";
 import { Container } from "@/components/ui/container";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useAdminClaims } from "@/hooks/use-admin";
 
 export function NoticeBoard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const router = useRouter();
+  const { isAdmin } = useAdminClaims();
   
 
   // Fetch notices with current filters
@@ -31,8 +36,7 @@ export function NoticeBoard() {
   } = useNotices(queryParams);
 
   const handleEditNotice = (notice: Notice) => {
-    // TODO: Open edit notice dialog/form
-    console.log("Edit notice:", notice);
+    router.push(`/notices/${notice.id}/edit`);
   };
 
   const handleDeleteNotice = async (notice: Notice) => {
@@ -64,6 +68,9 @@ export function NoticeBoard() {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">Notice Board</h1>
+                {isAdmin && (
+                  <Button onClick={() => router.push("/notices/new")}>Create Notice</Button>
+                )}
               </div>
               
               <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">

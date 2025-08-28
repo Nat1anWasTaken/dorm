@@ -170,7 +170,8 @@ export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Noti
     if (!db) {
       throw new Error("Firebase not initialized");
     }
-    const docRef = await addDoc(collection(db, NOTICES_COLLECTION), {
+    // Build payload and omit undefined fields (Firestore rejects undefined values)
+    const basePayload = {
       title: noticeData.title,
       description: noticeData.description,
       content: noticeData.content,
@@ -178,7 +179,12 @@ export async function createNotice(noticeData: Omit<Notice, "id">): Promise<Noti
       image: noticeData.image,
       isPinned: noticeData.isPinned || false,
       createdAt: noticeData.createdAt,
-    });
+    } as const;
+    const cleanPayload = Object.fromEntries(
+      Object.entries(basePayload).filter(([, v]) => v !== undefined)
+    );
+
+    const docRef = await addDoc(collection(db, NOTICES_COLLECTION), cleanPayload);
 
     const newNotice: Notice = {
       id: docRef.id,
