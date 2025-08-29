@@ -10,9 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Development:**
 
-- `pnpm dev` - Start development server (uses Turbopack)
+- `pnpm dev` - Start development server (uses Turbopack) - **ONLY run when explicitly requested by the user**
 - `pnpm build` - Build for production (uses Turbopack)
-- `pnpm start` - Start production server
+- `pnpm start` - Start production server - **ONLY run when explicitly requested by the user**
 - `pnpm lint` - Run ESLint
 - `pnpm lint:fix` - Run ESLint with auto-fix
 - `pnpm format` - Format code with Prettier
