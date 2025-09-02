@@ -68,19 +68,19 @@ export default function NoticeReadPage() {
           <div className="text-gray-600">找不到公告。</div>
         ) : (
           <article className="overflow-hidden rounded-lg bg-white shadow-sm">
-            {notice.image ? (
-              <div className="relative aspect-[16/6] bg-gray-100">
-                <Image
-                  src={notice.image}
-                  alt={notice.title}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            ) : null}
-
             <div className="p-6 sm:p-8">
+              {notice.image ? (
+                <div className="mb-6">
+                  <Image
+                    src={notice.image}
+                    alt={notice.title}
+                    width={1200}
+                    height={800}
+                    className="h-auto w-full rounded-md border border-gray-200 bg-gray-50 object-contain"
+                    priority
+                  />
+                </div>
+              ) : null}
               <div className="mb-4 flex items-center gap-3">
                 <Badge className={categoryColor}>{categoryLabel}</Badge>
                 {notice.isPinned && (
