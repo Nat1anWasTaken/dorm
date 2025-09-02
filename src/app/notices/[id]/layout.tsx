@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { fetchNotice } from "@/lib/api/notices";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const id = params.id;
+  const { id } = await params;
   try {
     const { notice } = await fetchNotice(id);
     const desc =

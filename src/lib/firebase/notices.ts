@@ -17,6 +17,7 @@ import {
   startAfter,
 } from "firebase/firestore";
 import { db } from "./client";
+const isServer = typeof window === "undefined";
 import { type Notice } from "@/types/notice";
 
 const NOTICES_COLLECTION = "notices";
@@ -55,8 +56,8 @@ export async function getNotices(params?: {
     console.log("Getting notices with params:", params);
     console.log("DB instance:", db ? "✅ Available" : "❌ Missing");
 
-    // Fallback to sample data if Firebase is not configured
-    if (!db) {
+    // Fallback to sample data if running on server or Firebase is not configured
+    if (isServer || !db) {
       console.warn("⚠️ Firestore not configured, using sample data");
       const { sampleNotices } = await import("@/lib/data/sample-notices");
 
@@ -96,7 +97,7 @@ export async function getNotices(params?: {
       };
     }
 
-    if (!db) {
+    if (isServer || !db) {
       throw new Error("Firebase 未初始化");
     }
     const noticesRef = collection(db, NOTICES_COLLECTION);
@@ -161,7 +162,7 @@ export async function getNotices(params?: {
  */
 export async function getNoticeById(id: string): Promise<Notice | null> {
   try {
-    if (!db) {
+    if (isServer || !db) {
       throw new Error("Firebase 未初始化");
     }
     const docRef = doc(db, NOTICES_COLLECTION, id);
@@ -281,8 +282,8 @@ export async function getNoticesInfinite(params?: {
   try {
     console.log("Getting infinite notices with params:", params);
 
-    // Fallback to sample data if Firebase is not configured
-    if (!db) {
+    // Fallback to sample data if running on server or Firebase is not configured
+    if (isServer || !db) {
       console.warn("⚠️ Firestore not configured, using sample data");
       const { sampleNotices } = await import("@/lib/data/sample-notices");
 
