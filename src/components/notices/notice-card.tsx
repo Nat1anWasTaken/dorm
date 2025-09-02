@@ -1,5 +1,6 @@
 "use client";
 
+import DeleteNoticeDialog from "@/components/notices/delete-notice-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +15,6 @@ import { Edit, Pin, PinOff, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import DeleteNoticeDialog from "@/components/notices/delete-notice-dialog";
 
 export function NoticeCard({
   notice,
@@ -65,7 +65,7 @@ export function NoticeCard({
           goToDetail();
         }
       }}
-      className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-lg"
+      className="group cursor-pointer overflow-hidden pt-0 transition-shadow hover:shadow-lg"
     >
       <div className="relative aspect-[4/3] bg-gray-100">
         {notice.image ? (

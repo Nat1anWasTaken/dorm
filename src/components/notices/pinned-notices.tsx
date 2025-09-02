@@ -1,7 +1,7 @@
-import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { type Notice } from "@/types/notice";
+import Image from "next/image";
 
 interface PinnedNoticesProps {
   notices: Notice[];
@@ -16,10 +16,10 @@ export function PinnedNotices({ notices }: PinnedNoticesProps) {
         {notices.map(notice => (
           <Card
             key={notice.id}
-            className="cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
+            className="cursor-pointer overflow-hidden py-0 transition-shadow hover:shadow-md"
           >
             <div className="flex">
-              <div className="relative h-20 w-20 flex-shrink-0 bg-gray-100">
+              <div className="relative w-20 flex-shrink-0 bg-gray-100 object-cover">
                 {notice.image ? (
                   <Image
                     src={notice.image}
