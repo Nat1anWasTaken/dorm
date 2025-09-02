@@ -12,6 +12,7 @@ import { useAdminClaims } from "@/hooks/use-admin";
 import { type Notice, type NoticeCardProps } from "@/types/notice";
 import { Edit, Pin, PinOff, Trash2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import DeleteNoticeDialog from "@/components/notices/delete-notice-dialog";
 
@@ -51,7 +52,8 @@ export function NoticeCard({
   };
 
   return (
-    <Card className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+    <Link href={`/notices/${notice.id}`}>
+      <Card className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
       <div className="relative aspect-[4/3] bg-gray-100">
         {notice.image ? (
           <Image
@@ -158,6 +160,7 @@ export function NoticeCard({
           }}
         />
       )}
-    </Card>
+      </Card>
+    </Link>
   );
 }
