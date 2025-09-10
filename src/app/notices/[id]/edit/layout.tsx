@@ -8,8 +8,13 @@ export const metadata: Metadata = {
     follow: false,
   },
   openGraph: {
-    title: "編輯公告",
-    description: "編輯宿舍公告內容",
+    title: "北科東校區宿委會 - 編輯公告",
+    description: "更新公告的詳細內容與圖片",
+    type: "website",
+  },
+  twitter: {
+    title: "北科東校區宿委會 - 編輯公告",
+    description: "更新公告的詳細內容與圖片",
   },
 };
 
